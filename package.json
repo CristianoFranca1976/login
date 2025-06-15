@@ -4,14 +4,16 @@
   "description": "- Start open a terminal in your VS code and white there:",
   "main": "./index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "Cristiano Franca",
   "license": "ISC",
-   "type": "commonjs",
+  "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "mongoose": "^8.15.2"

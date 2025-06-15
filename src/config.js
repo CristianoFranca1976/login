@@ -1,18 +1,22 @@
 const mongoose = require('mongoose');
-const connect = mongoose.connect("mongodb://localhost:27017/Login-tut");
+require('dotenv').config();
 
-// Check database connected or not
-connect.then(() => {
+// Use variável de ambiente (ex: Railway ou MongoDB Atlas)
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
     console.log("Database Connected Successfully");
 })
-.catch(() => {
-    console.log("Database cannot be Connected");
-})
+.catch((err) => {
+    console.error("Database cannot be Connected:", err);
+});
 
-// Create Schema
+// Schema
 const Loginschema = new mongoose.Schema({
     name: {
-        type:String,
+        type: String,
         required: true
     },
     password: {
@@ -21,7 +25,5 @@ const Loginschema = new mongoose.Schema({
     }
 });
 
-// collection part
-const collection = new mongoose.model("users", Loginschema);
-
+const collection = mongoose.model("users", Loginschema);
 module.exports = collection;
