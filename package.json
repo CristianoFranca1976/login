@@ -4,12 +4,12 @@
   "description": "- Start open a terminal in your VS code and white there:",
   "main": "./index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Cristiano Franca",
   "license": "ISC",
+   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "ejs": "^3.1.10",
