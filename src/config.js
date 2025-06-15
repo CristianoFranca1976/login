@@ -4,7 +4,7 @@ require('dotenv').config();
 console.log("🔍 MONGODB_URI:", process.env.MONGODB_URI);
 
 // Use variável de ambiente (ex: Railway ou MongoDB Atlas)
-mongoose.connect(process.env.MONGODB_URI + "login", {
+mongoose.connect(process.env.MONGODB_URI + "Login", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
