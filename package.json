@@ -2,10 +2,10 @@
   "name": "login",
   "version": "1.0.0",
   "description": "- Start open a terminal in your VS code and white there:",
-  "main": "index.js",
+  "main": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "Cristiano Franca",

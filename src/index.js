@@ -71,7 +71,10 @@ app.post("/login", async (req, res) => {
 
 
 // Define Port for Application
-const port = 5000;
-app.listen(port, () => {
-    console.log(`Server listening on port: http://localhost:${port}`)
-});
+// const port = 5000;
+// app.listen(port, () => {
+//     console.log(`Server listening on port: http://localhost:${port}`)
+// });
+
+module.exports = app; // <- Exporta o app para o Vercel usar como handler
+
