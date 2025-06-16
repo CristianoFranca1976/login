@@ -4,7 +4,7 @@ require('dotenv').config();
 // Ver se a variável de ambiente chegou
 console.log("🔍 MONGODB_URI:", process.env.MONGODB_URI);
 
-mongoose.connect("mongodb+srv://cristianofranca:VUpEawp2gHH9SlbP@login.h6f4kfq.mongodb.net/?retryWrites=true&w=majority&appName=login", {
+mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
