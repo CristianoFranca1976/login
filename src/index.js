@@ -1,7 +1,7 @@
 
 const express = require("express");
 const path = require("path");
-const collection = require("../src/config"); // ✅ Correto
+const collection = require("./config"); // ✅ Correto
 const bcrypt = require('bcrypt');
 
 const app = express();
