@@ -40,20 +40,19 @@ app.post("/signup", async (req, res) => {
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+
     data.password = hashedPassword;
 
-    console.log("📤 Salvando no MongoDB:", data);
-    const result = await collection.create(data); // ou insertOne(data)
+    const result = await collection.create(data);
 
     console.log("✅ Usuário criado:", result);
-    return res.send("Usuário criado com sucesso!"); // ⚠️ Troquei o redirect
 
+    return res.redirect("/"); // ou res.render("home");
   } catch (err) {
     console.error("❌ Erro no signup:", err);
     res.status(500).send("Internal Server Error");
   }
 });
-
 
 // Login user 
 // POST /login
