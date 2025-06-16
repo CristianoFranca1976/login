@@ -43,7 +43,8 @@ app.post("/signup", async (req, res) => {
 
     data.password = hashedPassword;
 
-    const result = await collection.insertOne(data)
+    const result = await collection.create(data);
+
     console.log("✅ Usuário criado:", result);
 
     return res.redirect("/"); // ou res.render("home");
