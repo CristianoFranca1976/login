@@ -1,19 +1,18 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+// Ver se a variável de ambiente chegou
 console.log("🔍 MONGODB_URI:", process.env.MONGODB_URI);
 
-// Use variável de ambiente (ex: Railway ou MongoDB Atlas)
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-
 .then(() => {
-    console.log("Database Connected Successfully");
+    console.log("✅ Database Connected Successfully");
 })
 .catch((err) => {
-    console.error("Database cannot be Connected:", err);
+    console.error("❌ Database Connection Failed:", err.message);
 });
 
 // Schema
