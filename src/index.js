@@ -9,6 +9,7 @@ const app = express();
 app.use(express.json());
 // Static file
 app.use(express.static("public"));
+app.use(express.static("image"));
 
 app.use(express.urlencoded({ extended: false }));
 //use EJS as the view engine
