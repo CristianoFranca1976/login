@@ -6,7 +6,7 @@
 
     body {
       font-family: 'Barlow Condensed', sans-serif;
-      background: url('https://images.unsplash.com/photo-1600369672172-e0065c2f3c13') no-repeat center center fixed;
+      background: url('/image/background.jpg') no-repeat center center fixed;
       background-size: cover;
       height: 100vh;
       display: flex;
