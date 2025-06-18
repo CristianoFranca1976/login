@@ -6,7 +6,7 @@
 
     body {
       font-family: 'Barlow Condensed', sans-serif;
-      background: url('/image/background.jpg') no-repeat center center fixed;
+      background: url('/background.jpg') no-repeat center center fixed;
       background-size: cover;
       height: 100vh;
       display: flex;
