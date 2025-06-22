@@ -99,7 +99,8 @@ app.post("/login", async (req, res) => {
       email: check.email,
     };
 
-    return res.render("home", { user: req.session.user });
+    // return res.render("home", { user: req.session.user });
+    return res.render("home");
   } catch (err) {
     console.error("❌ Erro no login:", err);
     res.status(500).send("Internal Server Error");
