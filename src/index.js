@@ -27,7 +27,13 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.render("login");
+  res.render("home", {
+  user: {
+    name: "Test User",
+    email: "test@example.com"
+  },
+  username: "testuser"
+});
 });
 
 app.get("/signup", (req, res) => {
