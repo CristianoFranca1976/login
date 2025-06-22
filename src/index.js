@@ -84,6 +84,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
+console.log(body.username);
 
 //Define Port for Application
 const port = process.env.PORT || 5000;
