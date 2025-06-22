@@ -71,7 +71,6 @@ app.post("/signup", async (req, res) => {
 // POST /login
 app.post("/login", async (req, res) => {
   try {
-    console.log("🔐 Login recebido:", req.body);
 
     const identifier = req.body.username;
 
@@ -80,7 +79,6 @@ app.post("/login", async (req, res) => {
     });
 
     if (!check) {
-      console.log("⚠️ Usuário não encontrado:", req.body.username);
       return res.send("User name not found");
     }
 
@@ -90,7 +88,7 @@ app.post("/login", async (req, res) => {
     );
 
     if (!isPasswordMatch) {
-      console.log("❌ Senha incorreta para:", req.body.username);
+      
       return res.send("Wrong password");
     }
 
@@ -99,8 +97,7 @@ app.post("/login", async (req, res) => {
       email: check.email,
     };
 
-    // return res.render("home", { user: req.session.user });
-    return res.render("home");
+    return res.render("home", { user: req.session.user });
   } catch (err) {
     console.error("❌ Erro no login:", err);
     res.status(500).send("Internal Server Error");
