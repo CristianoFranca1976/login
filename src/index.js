@@ -120,9 +120,7 @@ app.post("/book", async (req, res) => {
       placa,
       servicos,
     });
-    if (!name || !email || !password) {
-      return res.status(400).send("Todos os campos são obrigatórios.");
-    }
+     
     await newBooking.save();
     console.log("✅ Agendamento salvo:", newBooking);
     res.send("Serviço agendado com sucesso!");
