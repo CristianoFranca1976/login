@@ -27,6 +27,8 @@ const Loginschema = new mongoose.Schema({
     }
 });
 
+console.log(document.getElementById('costumer').innerHTML = Loginschema.get(this.name()));
+
 const collection = mongoose.model("users", Loginschema);
 module.exports = collection;
 
