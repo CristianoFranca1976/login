@@ -357,7 +357,7 @@
                 </form>
                 <div id="btns-send">
                   <button type="button" id="closeFormBtn">Cancel</button>
-                  <button type="button" type="button">Send</button>
+                  <button type="button" id="sendBtn">Send</button>
                 </div>
               </div>
             </div>
@@ -531,44 +531,44 @@
 
       // send form
 
-      document.getElementById("enviar").addEventListener("click", async () => {
-    const form = document.getElementById("repairForm");
-    const formData = new FormData(form);
+      document.getElementById("sendBtn").addEventListener("click", async () => {
+        const form = document.getElementById("repairForm");
+        const formData = new FormData(form);
 
-    const data = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      tipoVeiculo: formData.get("tipoVeiculo"),
-      placa: formData.get("placa"),
-      servicos: []
-    };
+        const data = {
+          name: formData.get("name"),
+          email: formData.get("email"),
+          tipoVeiculo: formData.get("tipoVeiculo"),
+          placa: formData.get("placa"),
+          servicos: [],
+        };
 
-    const categorias = formData.getAll("categoria[]");
-    const descricoes = formData.getAll("descricao[]");
+        const categorias = formData.getAll("categoria[]");
+        const descricoes = formData.getAll("descricao[]");
 
-    for (let i = 0; i < categorias.length; i++) {
-      data.servicos.push({
-        categoria: categorias[i],
-        descricao: descricoes[i]
+        for (let i = 0; i < categorias.length; i++) {
+          data.servicos.push({
+            categoria: categorias[i],
+            descricao: descricoes[i],
+          });
+        }
+
+        try {
+          const response = await fetch("/book", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.text();
+          alert(result); // ou exibir bonitinho na tela
+          form.reset(); // limpa formulário se quiser
+          document.getElementById("formOverlay").style.display = "none";
+        } catch (err) {
+          console.error("❌ Erro ao enviar:", err);
+          alert("Erro ao enviar agendamento");
+        }
       });
-    }
-
-    try {
-      const response = await fetch("/book", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-
-      const result = await response.text();
-      alert(result); // ou exibir bonitinho na tela
-      form.reset(); // limpa formulário se quiser
-      document.getElementById("formOverlay").style.display = "none";
-    } catch (err) {
-      console.error("❌ Erro ao enviar:", err);
-      alert("Erro ao enviar agendamento");
-    }
-  });
 
       // about
 

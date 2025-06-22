@@ -106,12 +106,12 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/home", (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("/");
-  }
-  res.render("home", { user: req.session.user });
-});
+// app.get("/home", (req, res) => {
+//   if (!req.session.user) {
+//     return res.redirect("/");
+//   }
+//   res.render("home", { user: req.session.user });
+// });
 
 app.post("/book", async (req, res) => {
   const { name, email, tipoVeiculo, placa, servicos } = req.body;

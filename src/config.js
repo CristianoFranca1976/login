@@ -40,16 +40,15 @@ const BookingSchema = new mongoose.Schema({
   servicos: [
     {
       categoria: String,
-      descricao: String
-    }
+      descricao: String,
+    },
   ],
-  date: { type: Date, default: Date.now }
+  date: { type: Date, default: Date.now },
 });
-
 
 const collection = mongoose.model("users", Loginschema);
 const Booking = mongoose.model("bookings", BookingSchema);
 module.exports = {
   collection, // login
-  Booking     // booking
+  Booking, // booking
 };
