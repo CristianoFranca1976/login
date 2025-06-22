@@ -120,7 +120,6 @@ app.post("/book", async (req, res) => {
       placa,
       servicos,
     });
-     
     await newBooking.save();
     console.log("✅ Agendamento salvo:", newBooking);
     res.send("Serviço agendado com sucesso!");
