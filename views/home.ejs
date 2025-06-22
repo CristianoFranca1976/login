@@ -17,6 +17,8 @@
             class="border-none"
             id="home"
             onclick="openPrice()"
+            aria-expanded="false"
+            aria-controls="price-modal"
           >
             Price
           </button>
@@ -271,8 +273,8 @@
           </div>
           <form action="/logout" method="get">
             <button type="submit">
-              Login out
-              <p id="costumer"><%= username %></p>
+              Logout (<%= username %>)
+              <!-- <p id="costumer"><%= username %></p> -->
             </button>
           </form>
         </nav>
