@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/style.css">
-  <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
-  <title>Auto/Motorcycle Cristiano</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
+    <title>Auto/Motorcycle Cristiano</title>
+  </head>
   <body>
     <div id="container">
       <header>
@@ -23,7 +23,9 @@
           <div id="price-modal" class="price">
             <div class="about-box">
               <div class="table_component" role="region" tabindex="0">
-                <p>&#128204; - Extra information. / &#127986; - Minium/Maxim.</p>
+                <p>
+                  &#128204; - Extra information. / &#127986; - Minium/Maxim.
+                </p>
                 <table>
                   <caption>
                     Brake
@@ -184,26 +186,42 @@
                     <tr>
                       <td>Read</td>
                       <td>£ 30</td>
-                      <td> --- </td>
+                      <td>---</td>
                     </tr>
                   </tbody>
                 </table>
-                <p><span>&#128680;</span> Other components only when text me and you can explain what you need, I will return and find a best price for your!</p>
-                <p><span>&#128226;</span> Price may vary depending on the type and difficulty of removing the component.</p>
-                <p><span>&#128205;</span> The additional cost for home visits will be £25 within Oxford and for over 3.5 miles a charge of £1 per mile will apply.</p>
+                <p>
+                  <span>&#128680;</span> Other components only when text me and
+                  you can explain what you need, I will return and find a best
+                  price for your!
+                </p>
+                <p>
+                  <span>&#128226;</span> Price may vary depending on the type
+                  and difficulty of removing the component.
+                </p>
+                <p>
+                  <span>&#128205;</span> The additional cost for home visits
+                  will be £25 within Oxford and for over 3.5 miles a charge of
+                  £1 per mile will apply.
+                </p>
               </div>
               <button type="button" onclick="closePrice()" class="close-btn">
                 Close
               </button>
             </div>
           </div>
-          <button type="button" class="border-none" id="history" onclick="openHistory()">
+          <button
+            type="button"
+            class="border-none"
+            id="history"
+            onclick="openHistory()"
+          >
             History
           </button>
           <div id="history-modal" class="price">
             <div class="about-box">
               <h2>My History service</h2>
-                <button type="button" onclick="closeHistory()" class="close-btn">
+              <button type="button" onclick="closeHistory()" class="close-btn">
                 Close
               </button>
             </div>
@@ -252,10 +270,10 @@
             </div>
           </div>
           <form action="/logout" method="get">
-          <button type="submit">
-            Login out
-            <p id="costumer"><%= username %></p>
-          </button>
+            <button type="submit">
+              Login out
+              <p id="costumer"><%= username %></p>
+            </button>
           </form>
         </nav>
       </header>
@@ -273,15 +291,15 @@
                     <legend>Customer data</legend>
                     <input
                       type="text"
-                      name="nome"
-                      placeholder="Full name"
-                      required
+                      name="name"
+                      value="<%= user.name %>"
+                      readonly
                     />
                     <input
                       type="email"
                       name="email"
-                      placeholder="Email"
-                      required
+                      value="<%= user.email %>"
+                      readonly
                     />
                   </fieldset>
 
@@ -339,7 +357,7 @@
                 </form>
                 <div id="btns-send">
                   <button type="button" id="closeFormBtn">Cancel</button>
-                  <button type="submit" type="button">Send</button>
+                  <button type="button" type="button">Send</button>
                 </div>
               </div>
             </div>
@@ -510,6 +528,47 @@
         const divProblema = botao.parentElement;
         divProblema.remove();
       }
+
+      // send form
+
+      document.getElementById("sendBtn").addEventListener("click", async () => {
+    const form = document.getElementById("repairForm");
+    const formData = new FormData(form);
+
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      tipoVeiculo: formData.get("tipoVeiculo"),
+      placa: formData.get("placa"),
+      servicos: []
+    };
+
+    const categorias = formData.getAll("categoria[]");
+    const descricoes = formData.getAll("descricao[]");
+
+    for (let i = 0; i < categorias.length; i++) {
+      data.servicos.push({
+        categoria: categorias[i],
+        descricao: descricoes[i]
+      });
+    }
+
+    try {
+      const response = await fetch("/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.text();
+      alert(result); // ou exibir bonitinho na tela
+      form.reset(); // limpa formulário se quiser
+      document.getElementById("formOverlay").style.display = "none";
+    } catch (err) {
+      console.error("❌ Erro ao enviar:", err);
+      alert("Erro ao enviar agendamento");
+    }
+  });
 
       // about
 

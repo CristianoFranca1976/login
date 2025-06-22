@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const collection = require("./config"); // ✅ Correto
+const { collection, Booking } = require("./config"); // ✅ Correto
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 
@@ -39,6 +39,7 @@ app.post("/signup", async (req, res) => {
 
     const data = {
       name: req.body.username,
+      email: req.body.email,
       password: req.body.password,
     };
 
@@ -72,7 +73,11 @@ app.post("/login", async (req, res) => {
   try {
     console.log("🔐 Login recebido:", req.body);
 
-    const check = await collection.findOne({ name: req.body.username });
+    const identifier = req.body.username;
+
+    const check = await collection.findOne({
+      $or: [{ name: identifier }, { email: identifier }],
+    });
 
     if (!check) {
       console.log("⚠️ Usuário não encontrado:", req.body.username);
@@ -89,15 +94,39 @@ app.post("/login", async (req, res) => {
       return res.send("Wrong password");
     }
 
-    req.session.user = req.body.username;
+    req.session.user = {
+      name: check.name,
+      email: check.email,
+    };
 
-    console.log("✅ Login bem-sucedido:", req.session.user);
-    return res.render("home", { username: req.session.user });
+    return res.render("home", { user: req.session.user });
   } catch (err) {
     console.error("❌ Erro no login:", err);
     res.status(500).send("Internal Server Error");
   }
 });
+
+app.post("/book", async (req, res) => {
+  const { name, email, tipoVeiculo, placa, servicos } = req.body;
+
+  try {
+    const newBooking = new Booking({
+      user: name,
+      email,
+      tipoVeiculo,
+      placa,
+      servicos
+    });
+
+    await newBooking.save();
+    console.log("✅ Agendamento salvo:", newBooking);
+    res.send("Serviço agendado com sucesso!");
+  } catch (err) {
+    console.error("❌ Erro ao salvar agendamento:", err);
+    res.status(500).send("Erro ao salvar agendamento");
+  }
+});
+;
 
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
