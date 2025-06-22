@@ -4,9 +4,1041 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/style.css">
-  <title>Garage</title>
+  <title>Auto/Motorcycle Cristiano</title>
 </head>
-<body>
-  <h1>Welcome to Home Page</h1>
-</body>
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
+
+    /* font-family: "Libre Baskerville", serif; */
+    /* font-family: "Permanent Marker", cursive; */
+
+    #container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column;
+      width: 1400px;
+      height: 900px;
+      background-color: rgba(15, 15, 15, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.699);
+      margin: 0 15px;
+    }
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px;
+    }
+    h1 {
+      color: white;
+      font-size: 2.5vh;
+      font-family: "Permanent Marker", cursive;
+      text-shadow: 0 0 25px rgba(255, 0, 0, 0.699);
+    }
+    h3 {
+      color: white;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    nav button {
+      text-decoration: none;
+      color: red;
+      padding: 5px;
+      border-radius: 5px;
+    }
+    nav a:hover {
+      background-color: rgba(128, 128, 128, 0.308);
+    }
+    footer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 40px;
+    }
+    .copy {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+    .copy p {
+      color: white;
+      font-family: "Libre Baskerville", serif;
+      font-size: 2vh;
+    }
+    p {
+      color: white;
+    }
+    section {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    .left,
+    .right {
+      width: 100%;
+      height: auto;
+      display: flex;
+      justify-content: center;
+    }
+    .left {
+      align-items: end;
+    }
+    .right {
+      align-items: center;
+      position: relative;
+    }
+    .book {
+      margin-bottom: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .book p {
+      font-size: 2.5vh;
+      color: red;
+    }
+    button {
+      padding: 5px 10px;
+      border-radius: 8px;
+      color: white;
+      background-color: transparent;
+      width: 120px;
+      border: 1px solid red;
+      cursor: pointer;
+    }
+    button:hover {
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.699);
+    }
+    .border-none {
+      border: none;
+    }
+    #imagem {
+      width: auto;
+      object-fit: cover;
+      position: absolute;
+      transition: opacity 1s ease-in-out;
+      opacity: 1;
+    }
+    .fade-out {
+      opacity: 0;
+    }
+    .contact {
+      display: flex;
+      gap: 20px;
+      padding: 10px;
+    }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: rgba(99, 99, 99, 0.445);
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+    }
+
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 8px;
+      background-color: transparent;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      outline: none;
+      color: white;
+    }
+
+    .modal-content input::placeholder,
+    .modal-content textarea::placeholder {
+      color: white;
+    }
+    .whatsapp-button {
+      cursor: pointer;
+    }
+    .close {
+      float: right;
+      cursor: pointer;
+      font-weight: bold;
+      color: red;
+    }
+    /* FORMULÁRIO POPUP */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+    .form-popup {
+      background: rgba(99, 99, 99, 0.445); /* igual ao modal-content */
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      color: white;
+      font-family: "Libre Baskerville", serif;
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.699);
+      border: 1px solid red;
+    }
+
+    .form-popup h2 {
+      text-align: center;
+      font-family: "Permanent Marker", cursive;
+      color: red;
+      margin-bottom: 15px;
+    }
+
+    .form-popup input,
+    .form-popup select {
+      width: auto;
+      margin-bottom: 10px;
+      padding: 8px;
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid red;
+      color: white;
+      outline: none;
+    }
+    .form-popup textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      padding: 8px;
+      background-color: transparent;
+      border: 1px solid red;
+      color: white;
+      outline: none;
+    }
+    .form-popup input::placeholder,
+    .form-popup textarea::placeholder {
+      color: white;
+    }
+
+    #btns-send button {
+      padding: 5px 10px;
+      border-radius: 8px;
+      color: rgb(255, 255, 255);
+      background-color: transparent;
+      border: 1px solid red;
+      cursor: pointer;
+    }
+    #btns-send button:hover {
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.699);
+    }
+    .form-popup button[type="button"] {
+      background-color: transparent;
+      color: red;
+      border: 1px dashed red;
+      cursor: pointer;
+    }
+    /* select style*/
+
+    .custom-select {
+      position: relative;
+    }
+    .custom-select select {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      font-size: 18px;
+      padding: 5px 8px 5px 8px;
+      background-color: transparent;
+      border-radius: 5px;
+      color: #000000;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0px 2px 20px 0px #ff0000;
+    }
+
+    .custom-select select:focus {
+      background: transparent;
+      border: 1px solid #c75a5a;
+      border-radius: 5px;
+    }
+
+    .custom-select::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      top: 50%;
+      right: 10px;
+      transform: translate(0, -50%);
+      width: 12px;
+      height: 12px;
+      background-color: #fd0202;
+      clip-path: polygon(
+        29% 0%,
+        71% 0%,
+        71% 56%,
+        100% 56%,
+        50% 100%,
+        0% 56%,
+        29% 56%
+      );
+    }
+    #btns-send {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 80px;
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      font-family: "Libre Baskerville", serif;
+    }
+    .btns {
+      width: auto;
+      display: flex;
+      align-items: center;
+      justify-content: end;
+    }
+    legend {
+      color: red;
+    }
+    fieldset {
+      border: 1px solid rgb(0, 0, 0);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    fieldset button {
+      width: 50px;
+      margin-left: auto;
+    }
+    /*About*/
+
+    .about {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+    .price {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+
+    .about-box {
+      background-color: #1e1e1e;
+      border: 2px solid #ff3c3c;
+      padding: 40px;
+      border-radius: 10px;
+      max-width: 600px;
+      color: white;
+      text-align: justify;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      word-spacing: 5px;
+    }
+
+    .close-btn {
+      background-color: #ff3c3c;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+      margin-left: auto;
+    }
+
+    /* price */
+
+    .table_component {
+      overflow: auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 35px;
+    }
+
+    .table_component table {
+      border: 1px ridge #dededf;
+      height: 100%;
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 1px;
+      text-align: center;
+    }
+
+    .table_component caption {
+      caption-side: top;
+      text-align: center;
+    }
+
+    .table_component th {
+      border: 1px ridge #dededf;
+      background-color: #eceff1;
+      color: #000000;
+      padding: 5px;
+    }
+
+    .table_component td {
+      border: 1px ridge #dededf;
+      background-color: #ffffff;
+      color: #000000;
+      padding: 5px;
+    }
+    /* Tool Tip */
+    .tooltip {
+      position: relative;
+      border-bottom: 1px dotted black;
+      cursor: pointer;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    @media only screen and (max-width: 1200px) {
+      #container {
+        height: 95%;
+      }
+      section {
+        flex-wrap: wrap;
+      }
+      #imagem {
+        width: 100%;
+        height: auto;
+      }
+      .left {
+        align-items: center;
+      }
+      .book {
+        margin-bottom: 0;
+      }
+    }
+    @media only screen and (max-width: 600px) {
+      .bottom {
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2vh;
+      }
+      nav {
+        flex-direction: column;
+      }
+    }
+  </style>
+  <body>
+    <div id="container">
+      <header>
+        <h1>Auto/Motorcycle Cristiano</h1>
+        <nav>
+          <button
+            type="button"
+            class="border-none"
+            id="home"
+            onclick="openPrice()"
+          >
+            Price
+          </button>
+          <div id="price-modal" class="price">
+            <div class="about-box">
+              <div class="table_component" role="region" tabindex="0">
+                <p>&#128204; - Extra information. / &#127986; - Minium/Maxim.</p>
+                <table>
+                  <caption>
+                    Brake
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Price - Car</th>
+                      <th>Price - Motorcycle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Disc</td>
+                      <td>£ 35</td>
+                      <td>£ 10</td>
+                    </tr>
+                    <tr>
+                      <td>Pads</td>
+                      <td>£ 35</td>
+                      <td>£ 15</td>
+                    </tr>
+                    <tr>
+                      <td>Shoes</td>
+                      <td>£ 40</td>
+                      <td>£ 20</td>
+                    </tr>
+                    <tr>
+                      <td>Caliper</td>
+                      <td>£ 80</td>
+                      <td>£ 30</td>
+                    </tr>
+                    <tr>
+                      <td>Fluid</td>
+                      <td>£ 50</td>
+                      <td>£ 30</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table>
+                  <caption>
+                    Service
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Price - Car</th>
+                      <th>Price - Motorcycle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="tooltip">
+                        Simple <span>&#128204;</span>
+                        <span class="tooltiptext"
+                          >Oil, oil filter, air filter and Levels</span
+                        >
+                      </td>
+                      <td>£ 60 <i class="fa-thin fa-code"></i></td>
+                      <td>£ 20</td>
+                    </tr>
+                    <tr>
+                      <td class="tooltip">
+                        Complete
+                        <span
+                          >&#128204;<span class="tooltiptext"
+                            >Simple + full check (brake, tyres, other...)</span
+                          ></span
+                        >
+                      </td>
+                      <td>£ 120</td>
+                      <td>£ 20</td>
+                    </tr>
+                    <tr>
+                      <td>Parts</td>
+                      <td>Not include</td>
+                      <td>Not include</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table>
+                  <caption>
+                    Suspension
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Price - Car</th>
+                      <th>Price - Motorcycle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Drop link</td>
+                      <td>£ 50</td>
+                      <td>---</td>
+                    </tr>
+                    <tr>
+                      <td>Low arm</td>
+                      <td>£ 100</td>
+                      <td>---</td>
+                    </tr>
+                    <tr>
+                      <td>Shock Absorber</td>
+                      <td>£ 150</td>
+                      <td>£ 60</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table>
+                  <caption>
+                    Exhaust
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Price - Car</th>
+                      <th>Price - Motorcycle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Full</td>
+                      <td class="tooltip">
+                        £ 100 - £ 250 <span>&#127986;</span>
+                        <span class="tooltiptext">Minium/Maximum</span>
+                      </td>
+                      <td class="tooltip">
+                        £ 40 - £ 60
+                        <span
+                          >&#127986;
+                          <span class="tooltiptext">Minium/Maximum</span>
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Peace</td>
+                      <td class="tooltip">
+                        £ 100 - £ 200 <span>&#127986;</span>
+                        <span class="tooltiptext">Minium/Maximum</span>
+                      </td>
+                      <td>£ 40</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table>
+                  <caption>
+                    Diagnostic
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Price - Car</th>
+                      <th>Price - Motorcycle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Read</td>
+                      <td>£ 30</td>
+                      <td> --- </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p><span>&#128680;</span> Other components only when text me and you can explain what you need, I will return and find a best price for your!</p>
+                <p><span>&#128226;</span> Price may vary depending on the type and difficulty of removing the component.</p>
+                <p><span>&#128205;</span> The additional cost for home visits will be £25 within Oxford and for over 3.5 miles a charge of £1 per mile will apply.</p>
+              </div>
+              <button type="button" onclick="closePrice()" class="close-btn">
+                Close
+              </button>
+            </div>
+          </div>
+          <button type="button" class="border-none" id="history" onclick="openHistory()">
+            History
+          </button>
+          <div id="history-modal" class="price">
+            <div class="about-box">
+              <h2>My History service</h2>
+                <button type="button" onclick="closeHistory()" class="close-btn">
+                Close
+              </button>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="border-none"
+            id="about"
+            onclick="openAbout()"
+          >
+            About
+          </button>
+          <div id="about-modal" class="about">
+            <div class="about-box">
+              <h2>About Me</h2>
+              <p>
+                Hello! My name is Cristiano and I'm a Brazilian mechanic with
+                over 7 years of experience, living in Oxford, UK.
+              </p>
+              <p>
+                Certified and also an MOT Tester, I offer vehicle services at
+                home and on-site (extra fees apply).
+              </p>
+              <p>
+                Appointments are made directly here and I reply as fast as
+                possible. I'm available two days a week due to a full-time job.
+              </p>
+              <p>
+                I'm also studying website programming, I started in July/2023, I
+                took advantage of some of this learning to set up this website.
+              </p>
+              <p>
+                Below on the page is the contact link in case you have
+                questions, suggestions, among others. I added a donation link to
+                help with the studies. Anything you come up with will be
+                welcome.
+              </p>
+              <p>
+                I would like to thank you for your presence and I hope I can
+                help you with whatever you need, whether it be with the vehicle
+                or with any questions about the website. Thank you.
+              </p>
+              <button type="button" onclick="closeAbout()" class="close-btn">
+                Close
+              </button>
+            </div>
+          </div>
+          <button type="button">
+            Login out
+            <p id="costumer">Costumer</p>
+          </button>
+        </nav>
+      </header>
+      <section>
+        <div class="left">
+          <div class="book">
+            <p>Repair, Service, other</p>
+            <button type="button" id="openFormBtn">BOOK HERE</button>
+            <!-- FORMULÁRIO POPUP DE REPARO -->
+            <div id="formOverlay" class="overlay">
+              <div class="form-popup">
+                <form id="repairForm">
+                  <h2>Service request</h2>
+                  <fieldset>
+                    <legend>Customer data</legend>
+                    <input
+                      type="text"
+                      name="nome"
+                      placeholder="Full name"
+                      required
+                    />
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      required
+                    />
+                  </fieldset>
+
+                  <fieldset>
+                    <legend>Veiculo data</legend>
+                    <div class="custom-select">
+                      <select
+                        name="tipoVeiculo"
+                        title="Type of Veiculo"
+                        required
+                      >
+                        <option value="">Vehicle type</option>
+                        <option value="carro">Car</option>
+                        <option value="moto">Motorcycle</option>
+                        <option value="outro">Other</option>
+                      </select>
+                    </div>
+                    <input
+                      type="text"
+                      name="placa"
+                      placeholder="Plate number"
+                      required
+                    />
+                  </fieldset>
+                  <!-- Área de problemas -->
+                  <div class="btns">
+                    <button type="button" onclick="adicionarProblema()">
+                      + Add Category
+                    </button>
+                  </div>
+
+                  <div id="problemas">
+                    <div class="problema">
+                      <fieldset>
+                        <legend>Type of service</legend>
+                        <div class="custom-select">
+                          <select name="categoria[]" title="Category">
+                            <option value="">Category</option>
+                            <option value="Brake">Brake</option>
+                            <option value="Exhaust">Exhaust</option>
+                            <option value="Service">Service</option>
+                            <option value="Diagnostic">Diagnostic</option>
+                            <option value="Part exchange">Part exchange</option>
+                            <option value="Suspension">Suspension</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <textarea
+                          name="descricao[]"
+                          placeholder="Service description"
+                        ></textarea>
+                      </fieldset>
+                    </div>
+                  </div>
+                </form>
+                <div id="btns-send">
+                  <button type="button" id="closeFormBtn">Cancel</button>
+                  <button type="submit" type="button">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="right">
+          <img src="/assets/fhoto01.png" alt="image" id="imagem" />
+        </div>
+      </section>
+      <footer>
+        <div class="bottom">
+          <div class="copy">
+            <a
+              href="https://copyright-ru.vercel.app/"
+              target="_blank"
+              rel="noopener"
+              title="Logo Copyright"
+            >
+              <img src="/assets/registered.png" alt="" />
+            </a>
+            <p>Copyright</p>
+          </div>
+          <div class="contact">
+            <a
+              href="mailto:cristiano.franca@hotmail.co.uk?subject=About%20repair%20my%20ve%C3%ADculo.&body=Auto%2FMotorcycle%20Cristiano.%0A%0A%0AHi%2C"
+            >
+              <img src="/assets/email.png" alt="Email" />
+            </a>
+            <a
+              href="https://donates.vercel.app/"
+              target="_blank"
+              rel="noopener"
+            >
+              <img src="/assets/donation.png" alt="Donate" />
+            </a>
+            <a class="whatsapp-button" id="openModal">
+              <img src="/assets/whatsapp.png" alt="Whatapp" />
+            </a>
+            <div class="modal" id="modal">
+              <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <h3>Send Message</h3>
+                <input type="text" id="nome" placeholder="Your name" />
+                <textarea
+                  id="mensagem"
+                  placeholder="Enter the message..."
+                ></textarea>
+                <button id="enviar" type="button">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <script>
+      // imagem change
+      const imagens = [
+        "/assets/fhoto01.png",
+        "/assets/fhoto02.png",
+        "/assets/fhoto03.png",
+        "/assets/fhoto04.png",
+      ];
+
+      let indice = 0;
+      const img = document.getElementById("imagem");
+
+      function trocarImagem() {
+        // Aplica o fade-out
+        img.classList.add("fade-out");
+
+        // Espera o fade-out terminar antes de trocar a imagem
+        setTimeout(() => {
+          indice = (indice + 1) % imagens.length;
+          img.src = imagens[indice];
+
+          // Aplica o fade-in
+          img.classList.remove("fade-out");
+        }, 1000); // tempo deve ser igual ao transition no CSS
+      }
+
+      // Troca a imagem a cada 4 segundos
+      setInterval(trocarImagem, 4000);
+
+      // about
+
+      const section = document.querySelector("section");
+
+      const about = `
+      <h1>About</h1>
+     `;
+
+      // whatsApp
+
+      const openModal = document.getElementById("openModal");
+      const modal = document.getElementById("modal");
+      const closeModal = document.getElementById("closeModal");
+      const enviar = document.getElementById("enviar");
+
+      openModal.onclick = () => (modal.style.display = "flex");
+      closeModal.onclick = () => (modal.style.display = "none");
+      window.onclick = (e) => {
+        if (e.target === modal) modal.style.display = "none";
+      };
+
+      enviar.onclick = () => {
+        const nome = document.getElementById("nome").value.trim();
+        const mensagem = document.getElementById("mensagem").value.trim();
+        const numero = "4407927132927"; // <-- Coloque aqui o número com DDI e DDD
+
+        if (!mensagem) {
+          alert("Please, white a message.");
+          return;
+        }
+
+        const texto = `Hi, my name is ${nome || "Anonym"}.\n${mensagem}`;
+        const url = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+
+        window.open(url, "_blank");
+      };
+
+      //form book
+
+      // Espera o DOM carregar antes de pegar os elementos
+      document.addEventListener("DOMContentLoaded", () => {
+        const openFormBtn = document.getElementById("openFormBtn");
+        const closeFormBtn = document.getElementById("closeFormBtn");
+        const formOverlay = document.getElementById("formOverlay");
+
+        openFormBtn.addEventListener("click", () => {
+          formOverlay.style.display = "flex"; // Mostra o popup
+        });
+
+        closeFormBtn.addEventListener("click", () => {
+          formOverlay.style.display = "none"; // Fecha o popup
+        });
+      });
+
+      function adicionarProblema() {
+        const problemasContainer = document.getElementById("problemas");
+        const repairForm = document.getElementById("repairForm");
+        const novoProblema = document.createElement("div");
+        const btns = document.getElementById("btns");
+        novoProblema.classList.add("problema");
+        novoProblema.innerHTML = `
+        <fieldset>
+        <legend>Type of service</legend>
+        <button type="button" class="removerProblemaBtn" onclick="removerProblema(this)">X</button>
+        <div class="custom-select">
+        <select name="categoria[]" title="Category">
+        <option value="">Category</option>
+        <option value="Brake">Brake</option>
+        <option value="Exhaust">Exhaust</option>
+        <option value="Service">Service</option>
+        <option value="Diagnostic">Diagnostic</option>
+        <option value="Part exchange">Part exchange</option>
+        <option value="Suspension">Suspension</option>
+        <option value="Other">Other</option>
+        </select>
+        </div>
+        <textarea name="descricao[]" placeholder="Service description"></textarea>
+        </fieldset>
+    `;
+        // repairForm.appendChild(novoProblema);
+        repairForm.insertAdjacentElement("beforeend", novoProblema);
+      }
+
+      function removerProblema(botao) {
+        const divProblema = botao.parentElement;
+        divProblema.remove();
+      }
+
+      // about
+
+      function openAbout() {
+        document.getElementById("about-modal").style.display = "flex";
+      }
+
+      function closeAbout() {
+        document.getElementById("about-modal").style.display = "none";
+      }
+
+      // Price
+
+      function openPrice() {
+        document.getElementById("price-modal").style.display = "flex";
+      }
+
+      function closePrice() {
+        document.getElementById("price-modal").style.display = "none";
+      }
+
+      // Hystory
+
+      function openHistory() {
+        document.getElementById("history-modal").style.display = "flex";
+      }
+
+      function closeHistory() {
+        document.getElementById("history-modal").style.display = "none";
+      }
+    </script>
+  </body>
 </html>
