@@ -76,13 +76,12 @@ app.post("/login", async (req, res) => {
     }
 
     console.log("✅ Login bem-sucedido:", req.body.username);
-    return res.render("home");
+    return res.render("home", { username: req.body.username });
 
   } catch (err) {
     console.error("❌ Erro no login:", err);
     res.status(500).send("Internal Server Error");
   }
-  document.getElementById('costumer').textContent = check;
 });
 
 
