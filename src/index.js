@@ -1,8 +1,8 @@
-
 const express = require("express");
 const path = require("path");
 const collection = require("./config"); // ✅ Correto
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const session = require("express-session");
 
 const app = express();
 // convert data into json format
@@ -15,12 +15,21 @@ app.use(express.urlencoded({ extended: false }));
 //use EJS as the view engine
 app.set("view engine", "ejs");
 
+app.use(
+  session({
+    secret: "Palitodedete10@", // Pode ser qualquer frase secreta
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Coloque como 'true' se usar HTTPS
+  })
+);
+
 app.get("/", (req, res) => {
-    res.render("login");
+  res.render("login");
 });
 
 app.get("/signup", (req, res) => {
-    res.render("signup");
+  res.render("signup");
 });
 
 // POST /signup
@@ -30,13 +39,15 @@ app.post("/signup", async (req, res) => {
 
     const data = {
       name: req.body.username,
-      password: req.body.password
+      password: req.body.password,
     };
 
     const existingUser = await collection.findOne({ name: data.name });
     if (existingUser) {
       console.log("⚠️ Usuário já existe:", data.name);
-      return res.send("User already exists. Please choose a different username.");
+      return res.send(
+        "User already exists. Please choose a different username."
+      );
     }
 
     const saltRounds = 10;
@@ -55,7 +66,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// Login user 
+// Login user
 // POST /login
 app.post("/login", async (req, res) => {
   try {
@@ -68,29 +79,37 @@ app.post("/login", async (req, res) => {
       return res.send("User name not found");
     }
 
-    const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
+    const isPasswordMatch = await bcrypt.compare(
+      req.body.password,
+      check.password
+    );
 
     if (!isPasswordMatch) {
       console.log("❌ Senha incorreta para:", req.body.username);
       return res.send("Wrong password");
     }
 
-    console.log("✅ Login bem-sucedido:", req.body.username);
-    return res.render("home", { username: req.body.username });
+    req.session.user = req.body.username;
 
+    console.log("✅ Login bem-sucedido:", req.session.user);
+    return res.render("home", { username: req.session.user });
   } catch (err) {
     console.error("❌ Erro no login:", err);
     res.status(500).send("Internal Server Error");
   }
 });
 
-
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Erro ao deslogar:", err);
+    }
+    res.redirect("/");
+  });
+});
 
 //Define Port for Application
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-    console.log(`Server listening on port: http://localhost:${port}`)
+  console.log(`Server listening on port: http://localhost:${port}`);
 });
-
-
-
