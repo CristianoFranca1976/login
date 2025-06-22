@@ -16,7 +16,6 @@ app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../views"));
 
-
 app.use(
   session({
     secret: "Palitodedete10@", // Pode ser qualquer frase secreta
@@ -53,6 +52,10 @@ app.post("/signup", async (req, res) => {
       );
     }
 
+    if (!name || !email || !password) {
+      return res.status(400).send("Todos os campos são obrigatórios.");
+    }
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(data.password, saltRounds);
 
@@ -72,30 +75,29 @@ app.post("/signup", async (req, res) => {
 // Login user
 app.post("/login", async (req, res) => {
   try {
-    const identifier = req.body.username;               // usuário ou e-mail
+    const identifier = req.body.username; // usuário ou e-mail
     const check = await collection.findOne({
       $or: [{ name: identifier }, { email: identifier }],
     });
 
-    if (!check)      return res.send("User name not found");
+    if (!check) return res.send("User name not found");
 
     const ok = await bcrypt.compare(req.body.password, check.password);
-    if (!ok)         return res.send("Wrong password");
+    if (!ok) return res.send("Wrong password");
 
     // 👉 grava na sessão
     req.session.user = { name: check.name, email: check.email };
 
     // 👉 renderiza já passando tudo que o EJS precisa
     return res.render("home", {
-      user: req.session.user,               // usado em <%= user.name %>
-      username: req.session.user.name,      // usado em <%= username %>
+      user: req.session.user, // usado em <%= user.name %>
+      username: req.session.user.name, // usado em <%= username %>
     });
   } catch (err) {
     console.error("❌ Erro no login:", err);
     res.status(500).send("Internal Server Error");
   }
 });
-
 
 app.get("/home", (req, res) => {
   // Garantir que a pessoa está logada
@@ -107,7 +109,6 @@ app.get("/home", (req, res) => {
   });
 });
 
-
 app.post("/book", async (req, res) => {
   const { name, email, tipoVeiculo, placa, servicos } = req.body;
 
@@ -117,9 +118,11 @@ app.post("/book", async (req, res) => {
       email,
       tipoVeiculo,
       placa,
-      servicos
+      servicos,
     });
-
+    if (!name || !email || !password) {
+      return res.status(400).send("Todos os campos são obrigatórios.");
+    }
     await newBooking.save();
     console.log("✅ Agendamento salvo:", newBooking);
     res.send("Serviço agendado com sucesso!");
@@ -128,8 +131,6 @@ app.post("/book", async (req, res) => {
     res.status(500).send("Erro ao salvar agendamento");
   }
 });
-;
-
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
