@@ -223,10 +223,6 @@
           <div id="history-modal" class="price">
             <div class="about-box">
               <h2>My History service</h2>
-              <p>
-                <strong>Veículo:</strong> <%= booking.tipoVeiculo %>
-              </p>
-              <p><strong>Placa:</strong> <%= booking.placa %></p>
               <button type="button" onclick="closeHistory()" class="close-btn">
                 Close
               </button>
@@ -277,7 +273,7 @@
           </div>
           <form action="/logout" method="get">
             <button type="submit">
-              Logout
+              Logout 
               <p id="customer"><%= user.name %></p>
             </button>
           </form>
