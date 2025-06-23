@@ -223,7 +223,15 @@
           <div id="history-modal" class="price">
             <div class="about-box">
               <h2>My History service</h2>
-              
+              <p>
+                <strong>Veículo:</strong> <%= booking.tipoVeiculo || "N/A" %>
+              </p>
+              <p><strong>Placa:</strong> <%= booking.placa || "N/A" %></p>
+              <p>
+                <strong>Data:</strong> <%= booking.date ? new
+                Date(booking.date).toLocaleString("pt-BR") : "Data não
+                disponível" %>
+              </p>
               <button type="button" onclick="closeHistory()" class="close-btn">
                 Close
               </button>
@@ -274,7 +282,7 @@
           </div>
           <form action="/logout" method="get">
             <button type="submit">
-              Logout 
+              Logout
               <p id="customer"><%= user.name %></p>
             </button>
           </form>
