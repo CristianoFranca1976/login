@@ -224,14 +224,9 @@
             <div class="about-box">
               <h2>My History service</h2>
               <p>
-                <strong>Veículo:</strong> <%= booking.tipoVeiculo || "N/A" %>
+                <strong>Veículo:</strong> <%= booking.tipoVeiculo %>
               </p>
-              <p><strong>Placa:</strong> <%= booking.placa || "N/A" %></p>
-              <p>
-                <strong>Data:</strong> <%= booking.date ? new
-                Date(booking.date).toLocaleString("pt-BR") : "Data não
-                disponível" %>
-              </p>
+              <p><strong>Placa:</strong> <%= booking.placa %></p>
               <button type="button" onclick="closeHistory()" class="close-btn">
                 Close
               </button>
