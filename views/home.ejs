@@ -222,7 +222,36 @@
           </button>
           <div id="history-modal" class="price">
             <div class="about-box">
-              <h2>My History service</h2>
+              <h2>Meus Agendamentos</h2>
+
+              <% if (bookings && bookings.length > 0) { %> <%
+              bookings.forEach(function(booking) { %>
+              <div class="about">
+                <p><strong>Veículo:</strong> <%= booking.tipoVeiculo %></p>
+                <p><strong>Placa:</strong> <%= booking.placa %></p>
+                <p>
+                  <strong>Data:</strong> <%= new
+                  Date(booking.date).toLocaleString("pt-BR") %>
+                </p>
+
+                <p><strong>Serviços:</strong></p>
+                <% if (Array.isArray(booking.servicos)) { %>
+                <ul>
+                  <% booking.servicos.forEach(function(servico) { %>
+                  <li>
+                    <strong><%= servico.categoria %></strong>: <%=
+                    servico.descricao %>
+                  </li>
+                  <% }) %>
+                </ul>
+                <% } else { %>
+                <p>Nenhum serviço encontrado.</p>
+                <% } %>
+              </div>
+              <hr />
+              <% }) %> <% } else { %>
+              <p>Você ainda não fez nenhum agendamento.</p>
+              <% } %>
               <button type="button" onclick="closeHistory()" class="close-btn">
                 Close
               </button>
@@ -273,7 +302,7 @@
           </div>
           <form action="/logout" method="get">
             <button type="submit">
-              Logout 
+              Logout
               <p id="customer"><%= user.name %></p>
             </button>
           </form>
