@@ -99,15 +99,48 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/home", (req, res) => {
-  // Garantir que a pessoa está logada
+// app.get("/home", (req, res) => {
+//   // Garantir que a pessoa está logada
+//   if (!req.session.user) return res.redirect("/");
+
+//   res.render("home", {
+//     user: req.session.user,
+//     username: req.session.user.name,
+//   });
+// });
+
+app.get("/home", async (req, res) => {
   if (!req.session.user) return res.redirect("/");
 
-  res.render("home", {
-    user: req.session.user,
-    username: req.session.user.name,
-  });
+  try {
+    const userEmail = req.session.user.email;
+
+    // Busca apenas os agendamentos do usuário logado
+    const userBookings = await Booking.find({ email: userEmail });
+
+    // Remove duplicações por data + placa (exemplo)
+    const uniqueBookings = [];
+    const seen = new Set();
+
+    for (const booking of userBookings) {
+      const key = booking.date.toISOString() + booking.placa;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueBookings.push(booking);
+      }
+    }
+
+    res.render("home", {
+      user: req.session.user,
+      username: req.session.user.name,
+      bookings: uniqueBookings,
+    });
+  } catch (err) {
+    console.error("❌ Erro ao carregar bookings:", err);
+    res.status(500).send("Erro ao carregar seus agendamentos.");
+  }
 });
+
 
 app.post("/book", async (req, res) => {
   const { name, email, tipoVeiculo, placa, servicos } = req.body;
