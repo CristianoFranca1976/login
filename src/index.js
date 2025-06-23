@@ -95,7 +95,7 @@ app.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error("❌ Erro no login:", err);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(`<pre>${err.stack}</pre>`);
   }
 });
 

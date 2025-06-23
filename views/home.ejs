@@ -223,18 +223,19 @@
           <div id="history-modal" class="price">
             <div class="about-box">
               <h2>Meus Agendamentos</h2>
-
               <% if (bookings && bookings.length > 0) { %> <%
               bookings.forEach(function(booking) { %>
               <div class="about">
-                <p><strong>Veículo:</strong> <%= booking.tipoVeiculo %></p>
-                <p><strong>Placa:</strong> <%= booking.placa %></p>
                 <p>
-                  <strong>Data:</strong> <%= new
-                  Date(booking.date).toLocaleString("pt-BR") %>
+                  <strong>Veículo:</strong> <%= booking.tipoVeiculo || "N/A" %>
+                </p>
+                <p><strong>Placa:</strong> <%= booking.placa || "N/A" %></p>
+                <p>
+                  <strong>Data:</strong> <%= booking.date ? new
+                  Date(booking.date).toLocaleString("pt-BR") : "Data não
+                  disponível" %>
                 </p>
 
-                <p><strong>Serviços:</strong></p>
                 <% if (Array.isArray(booking.servicos)) { %>
                 <ul>
                   <% booking.servicos.forEach(function(servico) { %>
@@ -245,13 +246,14 @@
                   <% }) %>
                 </ul>
                 <% } else { %>
-                <p>Nenhum serviço encontrado.</p>
+                <p>Sem serviços cadastrados</p>
                 <% } %>
               </div>
               <hr />
               <% }) %> <% } else { %>
-              <p>Você ainda não fez nenhum agendamento.</p>
+              <p>Você ainda não possui agendamentos.</p>
               <% } %>
+
               <button type="button" onclick="closeHistory()" class="close-btn">
                 Close
               </button>
