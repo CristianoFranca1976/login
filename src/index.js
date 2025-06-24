@@ -3,6 +3,7 @@ const path = require("path");
 const { collection, Booking } = require("./config"); // ✅ Correto
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const nodemailer = require("nodemailer");
 
 const app = express();
 // convert data into json format
@@ -123,13 +124,16 @@ app.get("/home", async (req, res) => {
     const seen = new Set();
 
     for (const booking of userBookings) {
-      const key = booking.date.toISOString() + booking.placa;
+      const dateKey =
+        booking.date instanceof Date
+          ? booking.date.toISOString()
+          : new Date().toISOString();
+      const key = dateKey + booking.placa;
       if (!seen.has(key)) {
         seen.add(key);
         uniqueBookings.push(booking);
       }
     }
-
     res.render("home", {
       user: req.session.user,
       username: req.session.user.name,
@@ -141,9 +145,41 @@ app.get("/home", async (req, res) => {
   }
 });
 
+// app.post("/book", async (req, res) => {
+//   const { name, email, tipoVeiculo, placa, servicos } = req.body;
+
+//   try {
+//     const newBooking = new Booking({
+//       user: name,
+//       email,
+//       tipoVeiculo,
+//       placa,
+//       servicos,
+//     });
+//     await newBooking.save();
+//     console.log("✅ Agendamento salvo:", newBooking);
+//     res.send("Serviço agendado com sucesso!");
+//   } catch (err) {
+//     console.error("❌ Erro ao salvar agendamento:", err);
+//     res.status(500).send("Erro ao salvar agendamento");
+//   }
+// });
+// app.get("/logout", (req, res) => {
+//   req.session.destroy((err) => {
+//     if (err) {
+//       console.error("Erro ao deslogar:", err);
+//     }
+//     res.redirect("/");
+//   });
+// });
+
 
 app.post("/book", async (req, res) => {
-  const { name, email, tipoVeiculo, placa, servicos } = req.body;
+  if (!req.session.user) return res.redirect("/");
+
+  const { tipoVeiculo, placa, servicos } = req.body;
+  const name = req.session.user.name;
+  const email = req.session.user.email;
 
   try {
     const newBooking = new Booking({
@@ -153,21 +189,56 @@ app.post("/book", async (req, res) => {
       placa,
       servicos,
     });
+
     await newBooking.save();
     console.log("✅ Agendamento salvo:", newBooking);
-    res.send("Serviço agendado com sucesso!");
-  } catch (err) {
-    console.error("❌ Erro ao salvar agendamento:", err);
-    res.status(500).send("Erro ao salvar agendamento");
-  }
-});
-app.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Erro ao deslogar:", err);
+
+    // Monta os serviços (ajuste se vier como string)
+    let servicosLista = "";
+    if (Array.isArray(servicos)) {
+      servicosLista = servicos
+        .map((s) => {
+          if (typeof s === "string") return `<li>${s}</li>`;
+          return `<li><strong>${s.categoria}</strong>: ${s.descricao}</li>`;
+        })
+        .join("");
     }
-    res.redirect("/");
-  });
+
+    const emailBody = `
+      <h2>📋 Confirmação de Agendamento</h2>
+      <p><strong>Nome:</strong> ${name}</p>
+      <p><strong>Veículo:</strong> ${tipoVeiculo}</p>
+      <p><strong>Placa:</strong> ${placa}</p>
+      <p><strong>Serviços:</strong></p>
+      <ul>${servicosLista}</ul>
+    `;
+
+    // 🔧 Configura o Nodemailer para Outlook
+    const transporter = nodemailer.createTransport({
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false, // StartTLS
+      auth: {
+        user: process.env.EMAIL_FROM,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: [process.env.EMAIL_OWNER, email],
+      subject: "Novo agendamento confirmado",
+      html: emailBody,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("📨 E-mail enviado para:", email, "+ você mesmo");
+
+    res.send("Agendamento feito e e-mail enviado com sucesso!");
+  } catch (err) {
+    console.error("❌ Erro ao enviar e-mail:", err);
+    res.status(500).send("Erro ao salvar agendamento ou enviar e-mail.");
+  }
 });
 
 //Define Port for Application
