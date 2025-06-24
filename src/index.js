@@ -1,3 +1,4 @@
+require("dotenv").config(); // Adicione no início do index.js!
 const express = require("express");
 const path = require("path");
 const { collection, Booking } = require("./config"); // ✅ Correto
@@ -37,7 +38,7 @@ app.get("/signup", (req, res) => {
 // POST /signup
 app.post("/signup", async (req, res) => {
   try {
-    console.log("📥 Signup recebido:", req.body);
+    console.log("📥 Signup received:", req.body);
 
     const data = {
       name: req.body.username,
@@ -47,14 +48,14 @@ app.post("/signup", async (req, res) => {
 
     const existingUser = await collection.findOne({ name: data.name });
     if (existingUser) {
-      console.log("⚠️ Usuário já existe:", data.name);
+      console.log("⚠️ User already exists:", data.name);
       return res.send(
         "User already exists. Please choose a different username."
       );
     }
 
     if (!name || !email || !password) {
-      return res.status(400).send("Todos os campos são obrigatórios.");
+      return res.status(400).send("All fields are required.");
     }
 
     const saltRounds = 10;
@@ -100,16 +101,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// app.get("/home", (req, res) => {
-//   // Garantir que a pessoa está logada
-//   if (!req.session.user) return res.redirect("/");
-
-//   res.render("home", {
-//     user: req.session.user,
-//     username: req.session.user.name,
-//   });
-// });
-
 app.get("/home", async (req, res) => {
   if (!req.session.user) return res.redirect("/");
 
@@ -140,39 +131,10 @@ app.get("/home", async (req, res) => {
       bookings: uniqueBookings,
     });
   } catch (err) {
-    console.error("❌ Erro ao carregar bookings:", err);
-    res.status(500).send("Erro ao carregar seus agendamentos.");
+    console.error("❌ Error loading bookings:", err);
+    res.status(500).send("Error loading your appointments.");
   }
 });
-
-// app.post("/book", async (req, res) => {
-//   const { name, email, tipoVeiculo, placa, servicos } = req.body;
-
-//   try {
-//     const newBooking = new Booking({
-//       user: name,
-//       email,
-//       tipoVeiculo,
-//       placa,
-//       servicos,
-//     });
-//     await newBooking.save();
-//     console.log("✅ Agendamento salvo:", newBooking);
-//     res.send("Serviço agendado com sucesso!");
-//   } catch (err) {
-//     console.error("❌ Erro ao salvar agendamento:", err);
-//     res.status(500).send("Erro ao salvar agendamento");
-//   }
-// });
-// app.get("/logout", (req, res) => {
-//   req.session.destroy((err) => {
-//     if (err) {
-//       console.error("Erro ao deslogar:", err);
-//     }
-//     res.redirect("/");
-//   });
-// });
-
 
 app.post("/book", async (req, res) => {
   if (!req.session.user) return res.redirect("/");
@@ -191,7 +153,7 @@ app.post("/book", async (req, res) => {
     });
 
     await newBooking.save();
-    console.log("✅ Agendamento salvo:", newBooking);
+    console.log("✅ Appointment saved:", newBooking);
 
     // Monta os serviços (ajuste se vier como string)
     let servicosLista = "";
@@ -205,39 +167,38 @@ app.post("/book", async (req, res) => {
     }
 
     const emailBody = `
-      <h2>📋 Confirmação de Agendamento</h2>
-      <p><strong>Nome:</strong> ${name}</p>
-      <p><strong>Veículo:</strong> ${tipoVeiculo}</p>
-      <p><strong>Placa:</strong> ${placa}</p>
-      <p><strong>Serviços:</strong></p>
+      <h2>📋 Appointment Confirmation</h2>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Vehicle:</strong> ${tipoVeiculo}</p>
+      <p><strong>Plate:</strong> ${placa}</p>
+      <p><strong>Services:</strong></p>
       <ul>${servicosLista}</ul>
     `;
 
     // 🔧 Configura o Nodemailer para Outlook
-    const transporter = nodemailer.createTransport({
-      host: "smtp.office365.com",
-      port: 587,
-      secure: false, // StartTLS
-      auth: {
-        user: process.env.EMAIL_FROM,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+  const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_FROM,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: [process.env.EMAIL_OWNER, email],
-      subject: "Novo agendamento confirmado",
+      subject: "New appointment confirmed",
       html: emailBody,
     };
 
     await transporter.sendMail(mailOptions);
-    console.log("📨 E-mail enviado para:", email, "+ você mesmo");
+    console.log("📨 Email sent to:", email, "+ yourself");
 
-    res.send("Agendamento feito e e-mail enviado com sucesso!");
+    res.send("Appointment made and email sent successfully!");
   } catch (err) {
-    console.error("❌ Erro ao enviar e-mail:", err);
-    res.status(500).send("Erro ao salvar agendamento ou enviar e-mail.");
+    console.error("❌ Error sending email:", err);
+    res.status(500).send("Error saving the appointment or sending the email.");
   }
 });
 

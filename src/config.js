@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
 require("dotenv").config();
+const mongoose = require("mongoose");
+
 
 // Ver se a variável de ambiente chegou
 console.log("🔍 MONGODB_URI:", process.env.MONGODB_URI);
