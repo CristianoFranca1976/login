@@ -116,10 +116,10 @@ app.get("/home", async (req, res) => {
   try {
     const userEmail = req.session.user.email;
 
-    // Busca apenas os agendamentos do usuário logado
+ 
     const userBookings = await Booking.find({ email: userEmail });
 
-    // Remove duplicações por data + placa (exemplo)
+ 
     const uniqueBookings = [];
     const seen = new Set();
 
