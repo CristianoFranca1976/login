@@ -138,10 +138,12 @@ app.post("/book", async (req, res) => {
   if (!req.session.user) return res.redirect("/");
 
   const { tipoVeiculo, placa, servicos } = req.body;
+  const name = req.session.user.name;
   const email = req.session.user.email;
 
   try {
     const newBooking = new Booking({
+      user: name,
       email,
       tipoVeiculo,
       placa,
@@ -149,18 +151,34 @@ app.post("/book", async (req, res) => {
     });
 
     await newBooking.save();
-    console.log("✅ Agendamento salvo:", newBooking);
+    console.log("✅ Appointment saved:", newBooking);
 
-    // Email simples (somente para o cliente)
+    // Monta os serviços (ajuste se vier como string)
+    let servicosLista = "";
+
+if (Array.isArray(servicos)) {
+  servicosLista = servicos
+    .map((s) =>
+      typeof s === "string"
+        ? `<li>${s}</li>`
+        : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
+    )
+    .join("");
+} else if (typeof servicos === "string") {
+  servicosLista = `<li>${servicos}</li>`;
+}
+
+
     const emailBody = `
-      Dear customer,
-
-      Your service request has been received.
-      We will get back to you as soon as possible.
-
-      Thank you!
+      <h2>📋 Appointment Confirmation</h2>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Vehicle:</strong> ${tipoVeiculo}</p>
+      <p><strong>Plate:</strong> ${placa}</p>
+      <p><strong>Services:</strong></p>
+      <ul>${servicosLista}</ul>
     `;
 
+    // 🔧 Configura o Nodemailer para Outlook
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -171,27 +189,30 @@ app.post("/book", async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
-      to: email, // envia só para o cliente
-      subject: "Service Request Received",
-      text: emailBody,
+      to: [process.env.EMAIL_OWNER, email],
+      subject: "New appointment confirmed",
+      html: emailBody,
     };
 
-    // Tenta enviar o email
+
     try {
-      await transporter.sendMail(mailOptions);
-      console.log("📨 Email enviado para:", email);
-    } catch (emailErr) {
-      console.error("❌ Falha ao enviar e-mail:", emailErr.message);
+      await transporter.verify();
+      const info = await transporter.sendMail(mailOptions);
+      console.log("📨 Email enviado com sucesso:", info.response);
+    } catch (err) {
+      console.error("❌ Falha ao enviar e-mail:", err.message);
+      console.error(err.stack);
     }
 
-    res.send("✅ Request saved and email sent.");
+    console.log("📨 Email sent to:", email, "+ yourself");
+
+    res.send("Appointment made and email sent successfully!");
   } catch (err) {
-    console.error("❌ Erro geral:", err);
-    res.status(500).send("❌ Failed to save request or send email.");
+    console.error("❌ Error sending email:", err);
+    console.error(err.stack);
+    res.status(500).send("Error saving the appointment or sending the email.");
   }
 });
-
-
 
 //Define Port for Application
 const port = process.env.PORT || 5000;
