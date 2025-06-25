@@ -182,17 +182,33 @@ app.post("/book", async (req, res) => {
       },
     });
 
-  try {
-    const info = await transporter.sendMail({
+    const mailOptions = {
       from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_OWNER,
-      subject: "✅ Teste de enviado GAaage",
-      text: "Este é um e-mail de teste enviado com Nodemailer + Outlook",
-    });
+      to: [process.env.EMAIL_OWNER, email],
+      subject: "New appointment confirmed",
+      html: emailBody,
+    };
 
-    console.log("📨 E-mail enviado:", info.messageId);
+    console.log("💌 Dados do e-mail:");
+    console.log("FROM:", process.env.EMAIL_FROM);
+    console.log("TO:", process.env.EMAIL_OWNER, email);
+    console.log("BODY:", emailBody);
+
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("📨 Email enviado com sucesso:", info.response);
+    } catch (err) {
+      console.error("❌ Falha ao enviar e-mail:", err.message);
+      console.error(err.stack);
+    }
+
+    console.log("📨 Email sent to:", email, "+ yourself");
+
+    res.send("Appointment made and email sent successfully!");
   } catch (err) {
-    console.error("❌ Erro ao enviar:", err);
+    console.error("❌ Error sending email:", err);
+    console.error(err.stack);
+    res.status(500).send("Error saving the appointment or sending the email.");
   }
 });
 
