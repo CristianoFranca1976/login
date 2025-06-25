@@ -194,12 +194,9 @@ if (Array.isArray(servicos)) {
       html: emailBody,
     };
 
-    console.log("💌 Dados do e-mail:");
-    console.log("FROM:", process.env.EMAIL_FROM);
-    console.log("TO:", process.env.EMAIL_OWNER, email);
-    console.log("BODY:", emailBody);
 
     try {
+      await transporter.verify();
       const info = await transporter.sendMail(mailOptions);
       console.log("📨 Email enviado com sucesso:", info.response);
     } catch (err) {
