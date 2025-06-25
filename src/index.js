@@ -186,16 +186,16 @@ app.post("/book", async (req, res) => {
       },
     });
 
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
-      to:[process.env.EMAIL_OWNER],
-      subject: "New appointment confirmed",
-      html: emailBody,
-    };
+    
 
 
     try {
-      const info = await transporter.sendMail(mailOptions);
+      await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_OWNER,
+      subject: "✅ Teste de envio Garage",
+      text: "Este é um e-mail de teste enviado com Nodemailer + Outlook",
+    });
       
     } catch (err) {
       console.error("❌ Falha ao enviar e-mail:");
