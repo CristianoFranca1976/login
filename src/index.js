@@ -134,16 +134,15 @@ app.get("/home", async (req, res) => {
   }
 });
 
-app.post("/book", async (req, res) => {
+aapp.post("/book", async (req, res) => {
   if (!req.session.user) return res.redirect("/");
 
   const { tipoVeiculo, placa, servicos } = req.body;
-  const name = req.session.user.name;
-  const email = req.session.user.email;
+  const email = req.session.user.email; // só isso do user
 
   try {
     const newBooking = new Booking({
-      user: name,
+      user: "anonymous", // opcional, ou use o email se quiser
       email,
       tipoVeiculo,
       placa,
@@ -153,14 +152,12 @@ app.post("/book", async (req, res) => {
     await newBooking.save();
     console.log("✅ Appointment saved:", newBooking);
 
-    // ✉️ Email simples
+    // 📩 Corpo básico do email
     const emailBody = `
-      Dear ${name},
+Your service request has been received.
+We will get back to you as soon as possible.
 
-      Your service request has been received.
-      We will get back to you as soon as possible.
-
-      Thank you!
+Thank you!
     `;
 
     const transporter = nodemailer.createTransport({
@@ -173,7 +170,7 @@ app.post("/book", async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
-      to: [process.env.EMAIL_OWNER, email], // envia pra você e pro cliente
+      to: [process.env.EMAIL_OWNER, email],
       subject: "Service Request Received",
       text: emailBody,
     };
@@ -187,6 +184,7 @@ app.post("/book", async (req, res) => {
     res.status(500).send("Error saving appointment or sending email.");
   }
 });
+
 
 
 //Define Port for Application
