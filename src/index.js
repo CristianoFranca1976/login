@@ -194,6 +194,11 @@ app.post("/book", async (req, res) => {
       html: emailBody,
     };
 
+    console.log("💌 Dados do e-mail:");
+    console.log("FROM:", process.env.EMAIL_FROM);
+    console.log("TO:", process.env.EMAIL_OWNER, email);
+    console.log("BODY:", emailBody);
+
     await transporter.sendMail(mailOptions);
     console.log("📨 Email sent to:", email, "+ yourself");
 
