@@ -141,6 +141,13 @@ app.post("/book", async (req, res) => {
   const name = req.session.user.name;
   const email = req.session.user.email;
 
+  console.log("📨 Dados recebidos no /book:");
+  console.log("Nome:", name);
+  console.log("Email:", email);
+  console.log("Veículo:", tipoVeiculo);
+  console.log("Placa:", placa);
+  console.log("Serviços:", servicos);
+
   try {
     const newBooking = new Booking({
       user: name,
@@ -153,21 +160,18 @@ app.post("/book", async (req, res) => {
     await newBooking.save();
     console.log("✅ Appointment saved:", newBooking);
 
-    // Monta os serviços (ajuste se vier como string)
     let servicosLista = "";
-
-if (Array.isArray(servicos)) {
-  servicosLista = servicos
-    .map((s) =>
-      typeof s === "string"
-        ? `<li>${s}</li>`
-        : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
-    )
-    .join("");
-} else if (typeof servicos === "string") {
-  servicosLista = `<li>${servicos}</li>`;
-}
-
+    if (Array.isArray(servicos)) {
+      servicosLista = servicos
+        .map((s) =>
+          typeof s === "string"
+            ? `<li>${s}</li>`
+            : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
+        )
+        .join("");
+    } else if (typeof servicos === "string") {
+      servicosLista = `<li>${servicos}</li>`;
+    }
 
     const emailBody = `
       <h2>📋 Appointment Confirmation</h2>
@@ -178,7 +182,6 @@ if (Array.isArray(servicos)) {
       <ul>${servicosLista}</ul>
     `;
 
-    // 🔧 Configura o Nodemailer para Outlook
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -187,6 +190,9 @@ if (Array.isArray(servicos)) {
       },
     });
 
+    await transporter.verify();
+    console.log("✅ SMTP verified");
+
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: [process.env.EMAIL_OWNER, email],
@@ -194,25 +200,17 @@ if (Array.isArray(servicos)) {
       html: emailBody,
     };
 
+    const info = await transporter.sendMail(mailOptions);
+    console.log("📨 Email enviado com sucesso:", info.response);
 
-    try {
-      await transporter.verify();
-      const info = await transporter.sendMail(mailOptions);
-      console.log("📨 Email enviado com sucesso:", info.response);
-    } catch (err) {
-      console.error("❌ Falha ao enviar e-mail:", err.message);
-      console.error(err.stack);
-    }
-
-    console.log("📨 Email sent to:", email, "+ yourself");
-
-    res.send("Appointment made and email sent successfully!");
+    res.send("✅ Appointment made and email sent successfully!");
   } catch (err) {
-    console.error("❌ Error sending email:", err);
+    console.error("❌ Erro ao salvar ou enviar email:", err.message);
     console.error(err.stack);
-    res.status(500).send("Error saving the appointment or sending the email.");
+    res.status(500).send("❌ Error saving appointment or sending email.");
   }
 });
+
 
 //Define Port for Application
 const port = process.env.PORT || 5000;
