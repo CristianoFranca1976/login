@@ -142,6 +142,7 @@ app.post("/book", async (req, res) => {
   const email = req.session.user.email;
 
   try {
+    // Salvar no MongoDB
     const newBooking = new Booking({
       user: name,
       email,
@@ -151,34 +152,22 @@ app.post("/book", async (req, res) => {
     });
 
     await newBooking.save();
-    console.log("✅ Appointment saved:", newBooking);
+    console.log("✅ Booking salvo no MongoDB");
 
-    // Monta os serviços (ajuste se vier como string)
-    let servicosLista = "";
-
-if (Array.isArray(servicos)) {
-  servicosLista = servicos
-    .map((s) =>
-      typeof s === "string"
-        ? `<li>${s}</li>`
-        : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
-    )
-    .join("");
-} else if (typeof servicos === "string") {
-  servicosLista = `<li>${servicos}</li>`;
-}
-
-
+    // Corpo do e-mail simples
     const emailBody = `
-      <h2>📋 Appointment Confirmation</h2>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Vehicle:</strong> ${tipoVeiculo}</p>
-      <p><strong>Plate:</strong> ${placa}</p>
-      <p><strong>Services:</strong></p>
-      <ul>${servicosLista}</ul>
+      <h2>Agendamento Recebido</h2>
+      <p>Olá ${name},</p>
+      <p>Recebemos seu agendamento para:</p>
+      <ul>
+        <li><strong>Veículo:</strong> ${tipoVeiculo}</li>
+        <li><strong>Placa:</strong> ${placa}</li>
+        <li><strong>Serviços:</strong> ${Array.isArray(servicos) ? servicos.join(", ") : servicos}</li>
+      </ul>
+      <p>Entraremos em contato em breve!</p>
     `;
 
-    // 🔧 Configura o Nodemailer para Outlook
+    // Nodemailer
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -187,32 +176,21 @@ if (Array.isArray(servicos)) {
       },
     });
 
-    const mailOptions = {
+    await transporter.sendMail({
       from: process.env.EMAIL_FROM,
-      to: [process.env.EMAIL_OWNER, email],
-      subject: "New appointment confirmed",
+      to: [process.env.EMAIL_OWNER, email], // vai para você + cliente
+      subject: "📋 Novo Agendamento Recebido",
       html: emailBody,
-    };
+    });
 
-
-    try {
-      await transporter.verify();
-      const info = await transporter.sendMail(mailOptions);
-      console.log("📨 Email enviado com sucesso:", info.response);
-    } catch (err) {
-      console.error("❌ Falha ao enviar e-mail:", err.message);
-      console.error(err.stack);
-    }
-
-    console.log("📨 Email sent to:", email, "+ yourself");
-
-    res.send("Appointment made and email sent successfully!");
+    console.log("📨 E-mail enviado para:", email);
+    res.send("✅ Agendamento salvo e e-mail enviado com sucesso.");
   } catch (err) {
-    console.error("❌ Error sending email:", err);
-    console.error(err.stack);
-    res.status(500).send("Error saving the appointment or sending the email.");
+    console.error("❌ Erro no processo:", err.message);
+    res.status(500).send("Erro ao salvar ou enviar e-mail: " + err.message);
   }
 });
+
 
 //Define Port for Application
 const port = process.env.PORT || 5000;
