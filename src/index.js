@@ -171,7 +171,10 @@ app.post("/book", async (req, res) => {
     const emailBody = `
       <h2>📋 Appointment Confirmation</h2>
       <p><strong>Name:</strong> ${name}</p>
-      
+      <p><strong>Vehicle:</strong> ${tipoVeiculo}</p>
+      <p><strong>Plate:</strong> ${placa}</p>
+      <p><strong>Services:</strong></p>
+      <ul>${servicosLista}</ul>
     `;
 
     // 🔧 Configura o Nodemailer para Outlook
@@ -185,7 +188,7 @@ app.post("/book", async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
-      to: [process.env.EMAIL_OWNER, email],
+      to:[process.env.EMAIL_OWNER],
       subject: "New appointment confirmed",
       html: emailBody,
     };
