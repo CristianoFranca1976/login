@@ -134,15 +134,14 @@ app.get("/home", async (req, res) => {
   }
 });
 
-aapp.post("/book", async (req, res) => {
+app.post("/book", async (req, res) => {
   if (!req.session.user) return res.redirect("/");
 
   const { tipoVeiculo, placa, servicos } = req.body;
-  const email = req.session.user.email; // só isso do user
+  const email = req.session.user.email;
 
   try {
     const newBooking = new Booking({
-      user: "anonymous", // opcional, ou use o email se quiser
       email,
       tipoVeiculo,
       placa,
@@ -150,14 +149,16 @@ aapp.post("/book", async (req, res) => {
     });
 
     await newBooking.save();
-    console.log("✅ Appointment saved:", newBooking);
+    console.log("✅ Agendamento salvo:", newBooking);
 
-    // 📩 Corpo básico do email
+    // Email simples (somente para o cliente)
     const emailBody = `
-Your service request has been received.
-We will get back to you as soon as possible.
+      Dear customer,
 
-Thank you!
+      Your service request has been received.
+      We will get back to you as soon as possible.
+
+      Thank you!
     `;
 
     const transporter = nodemailer.createTransport({
@@ -170,18 +171,23 @@ Thank you!
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
-      to: [process.env.EMAIL_OWNER, email],
+      to: email, // envia só para o cliente
       subject: "Service Request Received",
       text: emailBody,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log("📨 Email sent to:", email, "and to you.");
+    // Tenta enviar o email
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log("📨 Email enviado para:", email);
+    } catch (emailErr) {
+      console.error("❌ Falha ao enviar e-mail:", emailErr.message);
+    }
 
-    res.send("Appointment saved and email sent!");
+    res.send("✅ Request saved and email sent.");
   } catch (err) {
-    console.error("❌ Error saving or sending:", err);
-    res.status(500).send("Error saving appointment or sending email.");
+    console.error("❌ Erro geral:", err);
+    res.status(500).send("❌ Failed to save request or send email.");
   }
 });
 
