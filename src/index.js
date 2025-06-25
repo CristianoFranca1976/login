@@ -135,80 +135,65 @@ app.get("/home", async (req, res) => {
 });
 
 app.post("/book", async (req, res) => {
-  if (!req.session.user) return res.redirect("/");
+  console.log("🔹 Step 1: Entrou no /book");
+  if (!req.session.user) {
+    console.log("🔹 Step 2: Usuário não logado, redirecionando");
+    return res.redirect("/");
+  }
+
+  console.log("🔹 Step 3: Sessão OK:", req.session.user);
 
   const { tipoVeiculo, placa, servicos } = req.body;
+  console.log("🔹 Step 4: Dados do formulário:", { tipoVeiculo, placa, servicos });
+
   const name = req.session.user.name;
   const email = req.session.user.email;
+  console.log("🔹 Step 5: Nome e e-mail da sessão:", name, email);
 
   try {
-    const newBooking = new Booking({
-      user: name,
-      email,
-      tipoVeiculo,
-      placa,
-      servicos,
-    });
-
+    const newBooking = new Booking({ user: name, email, tipoVeiculo, placa, servicos });
     await newBooking.save();
-    console.log("✅ Appointment saved:", newBooking);
+    console.log("🔹 Step 6: Saved booking:", newBooking);
 
-    // Monta os serviços formatados para e-mail HTML
     let servicosLista = "";
-
     if (Array.isArray(servicos)) {
-      servicosLista = servicos
-        .map((s) =>
-          typeof s === "string"
-            ? `<li>${s}</li>`
-            : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
-        )
-        .join("");
+      servicosLista = servicos.map(s =>
+        typeof s === "string" ? `<li>${s}</li>` :
+        `<li>${s?.categoria}: ${s?.descricao}</li>`
+      ).join("");
     } else if (typeof servicos === "string") {
       servicosLista = `<li>${servicos}</li>`;
     }
+    console.log("🔹 Step 7: servicosLista:", servicosLista);
 
-    // Corpo do e-mail HTML
-    const emailBody = `
-      <h2>📋 Confirmação de Agendamento</h2>
-      <p><strong>Nome:</strong> ${name}</p>
-      <p><strong>Veículo:</strong> ${tipoVeiculo}</p>
-      <p><strong>Placa:</strong> ${placa}</p>
-      <p><strong>Serviços:</strong></p>
-      <ul>${servicosLista}</ul>
-    `;
+    const emailBody = `<p>Olá ${name}, agendamento confirmado.</p><ul>${servicosLista}</ul>`;
+    console.log("🔹 Step 8: emailBody montado.");
 
-    // Transporter configurado para Gmail
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_FROM,
-        pass: process.env.EMAIL_PASS,
-      },
+      host: "smtp.gmail.com", port: 465, secure: true,
+      auth: { user: process.env.EMAIL_FROM, pass: process.env.EMAIL_PASS }
     });
+    console.log("🔹 Step 9: Transporter criado");
 
     await transporter.verify();
-    console.log("✅ Conexão com Gmail SMTP verificada.");
+    console.log("🔹 Step 10: SMTP verificado");
 
-    const mailOptions = {
+    const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM,
-      to: [process.env.EMAIL_OWNER, email], // Envia para dono + cliente
-      subject: "✅ Agendamento Confirmado",
-      html: emailBody,
-    };
+      to: [process.env.EMAIL_OWNER, email],
+      subject: "Teste Agendamento",
+      html: emailBody
+    });
+    console.log("🔹 Step 11: E-mail enviado:", info.response);
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("📨 Email enviado com sucesso:", info.response);
-
-    res.send("✅ Agendamento salvo e e-mail enviado com sucesso.");
+    res.send("✅ Enviado com sucesso!");
   } catch (err) {
-    console.error("❌ Erro geral:", err.message);
+    console.error("❌ Step ERRO:", err.message);
     console.error(err.stack);
-    res.status(500).send("❌ Erro ao salvar agendamento ou enviar e-mail.");
+    res.status(500).send("Erro no envio: " + err.message);
   }
 });
+
 
 
 //Define Port for Application
