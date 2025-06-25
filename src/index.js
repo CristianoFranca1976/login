@@ -158,11 +158,10 @@ app.post("/book", async (req, res) => {
 
     if (Array.isArray(servicos)) {
       servicosLista = servicos
-        .map(
-          (s) =>
-            `<li>${
-              typeof s === "string" ? s : `${s.categoria}: ${s.descricao}`
-            }</li>`
+        .map((s) =>
+          typeof s === "string"
+            ? `<li>${s}</li>`
+            : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
         )
         .join("");
     } else if (typeof servicos === "string") {
@@ -199,7 +198,14 @@ app.post("/book", async (req, res) => {
     console.log("TO:", process.env.EMAIL_OWNER, email);
     console.log("BODY:", emailBody);
 
-    await transporter.sendMail(mailOptions);
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("📨 Email enviado com sucesso:", info.response);
+    } catch (err) {
+      console.error("❌ Falha ao enviar e-mail:", err.message);
+      console.error(err.stack);
+    }
+
     console.log("📨 Email sent to:", email, "+ yourself");
 
     res.send("Appointment made and email sent successfully!");
