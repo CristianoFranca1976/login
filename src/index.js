@@ -107,10 +107,8 @@ app.get("/home", async (req, res) => {
   try {
     const userEmail = req.session.user.email;
 
- 
     const userBookings = await Booking.find({ email: userEmail });
 
- 
     const uniqueBookings = [];
     const seen = new Set();
 
@@ -157,13 +155,18 @@ app.post("/book", async (req, res) => {
 
     // Monta os serviços (ajuste se vier como string)
     let servicosLista = "";
+
     if (Array.isArray(servicos)) {
       servicosLista = servicos
-        .map((s) => {
-          if (typeof s === "string") return `<li>${s}</li>`;
-          return `<li><strong>${s.categoria}</strong>: ${s.descricao}</li>`;
-        })
+        .map(
+          (s) =>
+            `<li>${
+              typeof s === "string" ? s : `${s.categoria}: ${s.descricao}`
+            }</li>`
+        )
         .join("");
+    } else if (typeof servicos === "string") {
+      servicosLista = `<li>${servicos}</li>`;
     }
 
     const emailBody = `
@@ -176,14 +179,13 @@ app.post("/book", async (req, res) => {
     `;
 
     // 🔧 Configura o Nodemailer para Outlook
-  const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_FROM,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_FROM,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
@@ -198,6 +200,7 @@ app.post("/book", async (req, res) => {
     res.send("Appointment made and email sent successfully!");
   } catch (err) {
     console.error("❌ Error sending email:", err);
+    console.error(err.stack);
     res.status(500).send("Error saving the appointment or sending the email.");
   }
 });
