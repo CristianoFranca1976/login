@@ -135,66 +135,84 @@ app.get("/home", async (req, res) => {
 });
 
 app.post("/book", async (req, res) => {
-  console.log("🔹 Step 1: Entrou no /book");
-  if (!req.session.user) {
-    console.log("🔹 Step 2: Usuário não logado, redirecionando");
-    return res.redirect("/");
-  }
-
-  console.log("🔹 Step 3: Sessão OK:", req.session.user);
+  if (!req.session.user) return res.redirect("/");
 
   const { tipoVeiculo, placa, servicos } = req.body;
-  console.log("🔹 Step 4: Dados do formulário:", { tipoVeiculo, placa, servicos });
-
   const name = req.session.user.name;
   const email = req.session.user.email;
-  console.log("🔹 Step 5: Nome e e-mail da sessão:", name, email);
 
   try {
-    const newBooking = new Booking({ user: name, email, tipoVeiculo, placa, servicos });
-    await newBooking.save();
-    console.log("🔹 Step 6: Saved booking:", newBooking);
-
-    let servicosLista = "";
-    if (Array.isArray(servicos)) {
-      servicosLista = servicos.map(s =>
-        typeof s === "string" ? `<li>${s}</li>` :
-        `<li>${s?.categoria}: ${s?.descricao}</li>`
-      ).join("");
-    } else if (typeof servicos === "string") {
-      servicosLista = `<li>${servicos}</li>`;
-    }
-    console.log("🔹 Step 7: servicosLista:", servicosLista);
-
-    const emailBody = `<p>Olá ${name}, agendamento confirmado.</p><ul>${servicosLista}</ul>`;
-    console.log("🔹 Step 8: emailBody montado.");
-
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com", port: 465, secure: true,
-      auth: { user: process.env.EMAIL_FROM, pass: process.env.EMAIL_PASS }
+    const newBooking = new Booking({
+      user: name,
+      email,
+      tipoVeiculo,
+      placa,
+      servicos,
     });
-    console.log("🔹 Step 9: Transporter criado");
 
-    await transporter.verify();
-    console.log("🔹 Step 10: SMTP verificado");
+    await newBooking.save();
+    console.log("✅ Appointment saved:", newBooking);
 
-    const info = await transporter.sendMail({
+    // Monta os serviços (ajuste se vier como string)
+    let servicosLista = "";
+
+if (Array.isArray(servicos)) {
+  servicosLista = servicos
+    .map((s) =>
+      typeof s === "string"
+        ? `<li>${s}</li>`
+        : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
+    )
+    .join("");
+} else if (typeof servicos === "string") {
+  servicosLista = `<li>${servicos}</li>`;
+}
+
+
+    const emailBody = `
+      <h2>📋 Appointment Confirmation</h2>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Vehicle:</strong> ${tipoVeiculo}</p>
+      <p><strong>Plate:</strong> ${placa}</p>
+      <p><strong>Services:</strong></p>
+      <ul>${servicosLista}</ul>
+    `;
+
+    // 🔧 Configura o Nodemailer para Outlook
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_FROM,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: [process.env.EMAIL_OWNER, email],
-      subject: "Teste Agendamento",
-      html: emailBody
-    });
-    console.log("🔹 Step 11: E-mail enviado:", info.response);
+      subject: "New appointment confirmed",
+      html: emailBody,
+    };
 
-    res.send("✅ Enviado com sucesso!");
+
+    try {
+      await transporter.verify();
+      const info = await transporter.sendMail(mailOptions);
+      console.log("📨 Email enviado com sucesso:", info.response);
+    } catch (err) {
+      console.error("❌ Falha ao enviar e-mail:", err.message);
+      console.error(err.stack);
+    }
+
+    console.log("📨 Email sent to:", email, "+ yourself");
+
+    res.send("Appointment made and email sent successfully!");
   } catch (err) {
-    console.error("❌ Step ERRO:", err.message);
+    console.error("❌ Error sending email:", err);
     console.error(err.stack);
-    res.status(500).send("Erro no envio: " + err.message);
+    res.status(500).send("Error saving the appointment or sending the email.");
   }
 });
-
-
 
 //Define Port for Application
 const port = process.env.PORT || 5000;
