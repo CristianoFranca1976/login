@@ -156,17 +156,18 @@ app.post("/book", async (req, res) => {
     // Monta os serviços (ajuste se vier como string)
     let servicosLista = "";
 
-    if (Array.isArray(servicos)) {
-      servicosLista = servicos
-        .map((s) =>
-          typeof s === "string"
-            ? `<li>${s}</li>`
-            : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
-        )
-        .join("");
-    } else if (typeof servicos === "string") {
-      servicosLista = `<li>${servicos}</li>`;
-    }
+if (Array.isArray(servicos)) {
+  servicosLista = servicos
+    .map((s) =>
+      typeof s === "string"
+        ? `<li>${s}</li>`
+        : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
+    )
+    .join("");
+} else if (typeof servicos === "string") {
+  servicosLista = `<li>${servicos}</li>`;
+}
+
 
     const emailBody = `
       <h2>📋 Appointment Confirmation</h2>
@@ -186,26 +187,32 @@ app.post("/book", async (req, res) => {
       },
     });
 
-    
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: [process.env.EMAIL_OWNER, email],
+      subject: "New appointment confirmed",
+      html: emailBody,
+    };
 
+    console.log("💌 Dados do e-mail:");
+    console.log("FROM:", process.env.EMAIL_FROM);
+    console.log("TO:", process.env.EMAIL_OWNER, email);
+    console.log("BODY:", emailBody);
 
     try {
-      await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_OWNER,
-      subject: "✅ Teste de envio Garage",
-      text: "Este é um e-mail de teste enviado com Nodemailer + Outlook",
-    });
-      
+      const info = await transporter.sendMail(mailOptions);
+      console.log("📨 Email enviado com sucesso:", info.response);
     } catch (err) {
-      console.error("❌ Falha ao enviar e-mail:");
-      
+      console.error("❌ Falha ao enviar e-mail:", err.message);
+      console.error(err.stack);
     }
 
-  
+    console.log("📨 Email sent to:", email, "+ yourself");
+
     res.send("Appointment made and email sent successfully!");
   } catch (err) {
-    
+    console.error("❌ Error sending email:", err);
+    console.error(err.stack);
     res.status(500).send("Error saving the appointment or sending the email.");
   }
 });
