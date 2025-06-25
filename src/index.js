@@ -153,7 +153,27 @@ app.post("/book", async (req, res) => {
     await newBooking.save();
     console.log("✅ Appointment saved:", newBooking);
 
-    // 🔧 Configura o Nodemailer para Gmail
+    // Monta os serviços (ajuste se vier como string)
+    let servicosLista = "";
+
+    if (Array.isArray(servicos)) {
+      servicosLista = servicos
+        .map((s) =>
+          typeof s === "string"
+            ? `<li>${s}</li>`
+            : `<li>${s?.categoria || ""}: ${s?.descricao || ""}</li>`
+        )
+        .join("");
+    } else if (typeof servicos === "string") {
+      servicosLista = `<li>${servicos}</li>`;
+    }
+
+    const emailBody = `
+      <h2>📋 Appointment Confirmation</h2>
+      
+    `;
+
+    // 🔧 Configura o Nodemailer para Outlook
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -162,29 +182,35 @@ app.post("/book", async (req, res) => {
       },
     });
 
-    // 🧪 Teste simples de envio
-    try {
-      const info = await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
-        to: [process.env.EMAIL_OWNER, email],
-        subject: "📬 Teste de envio simples",
-        html: `<p>Olá ${name}, seu agendamento foi salvo com sucesso!</p>`,
-      });
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: [process.env.EMAIL_OWNER, email],
+      subject: "New appointment confirmed",
+      html: emailBody,
+    };
 
-      console.log("✅ E-mail de teste enviado com sucesso:", info.response);
+    console.log("💌 Dados do e-mail:");
+    console.log("FROM:", process.env.EMAIL_FROM);
+    console.log("TO:", process.env.EMAIL_OWNER, email);
+    console.log("BODY:", emailBody);
+
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("📨 Email enviado com sucesso:", info.response);
     } catch (err) {
-      console.error("❌ Falha ao enviar e-mail de teste:", err.message);
+      console.error("❌ Falha ao enviar e-mail:", err.message);
       console.error(err.stack);
     }
 
-    res.send("Appointment made and email sent (test mode)!");
+    console.log("📨 Email sent to:", email, "+ yourself");
+
+    res.send("Appointment made and email sent successfully!");
   } catch (err) {
-    console.error("❌ Error saving or sending:", err);
+    console.error("❌ Error sending email:", err);
     console.error(err.stack);
     res.status(500).send("Error saving the appointment or sending the email.");
   }
 });
-
 
 //Define Port for Application
 const port = process.env.PORT || 5000;
