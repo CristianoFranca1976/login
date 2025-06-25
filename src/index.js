@@ -170,7 +170,11 @@ app.post("/book", async (req, res) => {
 
     const emailBody = `
       <h2>📋 Appointment Confirmation</h2>
-      
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Vehicle:</strong> ${tipoVeiculo}</p>
+      <p><strong>Plate:</strong> ${placa}</p>
+      <p><strong>Services:</strong></p>
+      <ul>${servicosLista}</ul>
     `;
 
     // 🔧 Configura o Nodemailer para Outlook
@@ -181,33 +185,10 @@ app.post("/book", async (req, res) => {
         pass: process.env.EMAIL_PASS,
       },
     });
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
-      to: [process.env.EMAIL_OWNER, email],
-      subject: "New appointment confirmed",
-      html: emailBody,
-    };
-
-    console.log("💌 Dados do e-mail:");
-    console.log("FROM:", process.env.EMAIL_FROM);
-    console.log("TO:", process.env.EMAIL_OWNER, email);
-    console.log("BODY:", emailBody);
-
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("📨 Email enviado com sucesso:", info.response);
-    } catch (err) {
-      console.error("❌ Falha ao enviar e-mail:", err.message);
-      console.error(err.stack);
-    }
-
-    console.log("📨 Email sent to:", email, "+ yourself");
-
+  
     res.send("Appointment made and email sent successfully!");
   } catch (err) {
-    console.error("❌ Error sending email:", err);
-    console.error(err.stack);
+    
     res.status(500).send("Error saving the appointment or sending the email.");
   }
 });
