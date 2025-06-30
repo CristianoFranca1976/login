@@ -9,7 +9,7 @@ npm init -y
 
 ```
 
-- It will do the filer pachage.json
+- It will do the filer package.json
 
 
 - Then, install express, mongoose, bcrypt ejs
