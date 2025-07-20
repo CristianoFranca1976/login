@@ -35,6 +35,17 @@ app.get("/signup", (req, res) => {
   res.render("signup");
 });
 
+app.get("/logout", (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error("❌ Erro ao sair:", err);
+      return res.status(500).send("Erro ao fazer logout.");
+    }
+    res.redirect("/");
+  });
+});
+
+
 // POST /signup
 app.post("/signup", async (req, res) => {
   try {
