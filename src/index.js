@@ -23,7 +23,7 @@ app.use(
     secret: "Palitodedete10@", // Pode ser qualquer frase secreta
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Coloque como 'true' se usar HTTPS
+    cookie: { secure: process.env.NODE_ENV === "production" }, // Coloque como 'true' se usar HTTPS
   })
 );
 
@@ -36,15 +36,14 @@ app.get("/signup", (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  req.session.destroy(err => {
+  req.session.destroy((err) => {
     if (err) {
-      console.error("❌ Erro ao sair:", err);
-      return res.status(500).send("Erro ao fazer logout.");
+      console.error("❌ Error exiting:", err);
+      return res.status(500).send("Error logging out.");
     }
     res.redirect("/");
   });
 });
-
 
 // POST /signup
 app.post("/signup", async (req, res) => {
@@ -65,7 +64,7 @@ app.post("/signup", async (req, res) => {
       );
     }
 
-    if (!name || !email || !password) {
+    if (!data.name || !data.email || !data.password) {
       return res.status(400).send("All fields are required.");
     }
 
@@ -93,10 +92,10 @@ app.post("/login", async (req, res) => {
       $or: [{ name: identifier }, { email: identifier }],
     });
 
-    if (!check) return res.send("User name not found");
+    if (!check) return res.status(401).send("User name not found");
 
     const ok = await bcrypt.compare(req.body.password, check.password);
-    if (!ok) return res.send("Wrong password");
+    if (!ok) return res.status(401).send("Wrong password");
 
     // 👉 grava na sessão
     req.session.user = { name: check.name, email: check.email };
@@ -173,7 +172,22 @@ app.post("/book", async (req, res) => {
       <ul>
         <li><strong>Vehicle:</strong> ${tipoVeiculo}</li>
         <li><strong>Plate:</strong> ${placa}</li>
-        <li><strong>Services:</strong> ${Array.isArray(servicos) ? servicos.join(", ") : servicos}</li>
+        <li><strong>Services:</strong><br />
+  ${
+    Array.isArray(servicos)
+      ? servicos
+          .map((s) =>
+            typeof s === "object"
+              ? `<strong>${s.categoria}:</strong> ${s.descricao}`
+              : s
+          )
+          .join("<br />")
+      : typeof servicos === "object"
+        ? `<strong>${servicos.categoria}:</strong> ${servicos.descricao}`
+        : servicos
+  }
+</li>
+
       </ul>
       <p>We will be in touch soon!</p>
     `;
@@ -201,7 +215,6 @@ app.post("/book", async (req, res) => {
     res.status(500).send("Error saving or sending email: " + err.message);
   }
 });
-
 
 //Define Port for Application
 const port = process.env.PORT || 5000;
