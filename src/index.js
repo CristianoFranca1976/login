@@ -23,7 +23,7 @@ app.use(
     secret: "Palitodedete10@", // Pode ser qualquer frase secreta
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === "production" }, // Coloque como 'true' se usar HTTPS
+    cookie: { secure: false }, // Coloque como 'true' se usar HTTPS
   })
 );
 
