@@ -148,8 +148,8 @@ app.post("/book", async (req, res) => {
   if (!req.session.user) return res.redirect("/");
 
   const { tipoVeiculo, placa, servicos } = req.body;
-  const name = req.session.user.name;
-  const email = req.session.user.email;
+  const name = req.session.user.name?.trim();
+  const email = req.session.user.email?.trim().toLowerCase();
 
   try {
     // Salvar no MongoDB
