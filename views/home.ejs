@@ -273,7 +273,7 @@
           </div>
           <form action="/logout" method="get">
             <button type="submit">
-              Logout 
+              Logout
               <p id="customer"><%= user.name %></p>
             </button>
           </form>
@@ -314,9 +314,9 @@
                         required
                       >
                         <option value="">Vehicle type</option>
-                        <option value="carro">Car</option>
-                        <option value="moto">Motorcycle</option>
-                        <option value="outro">Other</option>
+                        <option value="Car">Car</option>
+                        <option value="Motorcycle">Motorcycle</option>
+                        <option value="Other">Other</option>
                       </select>
                     </div>
                     <input
@@ -498,7 +498,7 @@
           formOverlay.style.display = "none"; // Fecha o popup
         });
       });
-
+ 
       function adicionarProblema() {
         const problemasContainer = document.getElementById("problemas");
         const repairForm = document.getElementById("repairForm");
@@ -596,8 +596,52 @@
 
       // Hystory
 
-      function openHistory() {
-        document.getElementById("history-modal").style.display = "flex";
+      async function openHistory() {
+        try {
+          const res = await fetch("/history");
+          const history = await res.json();
+
+          const modal = document.getElementById("history-modal");
+          const container = modal.querySelector(".about-box");
+
+          let html = `<h2>Hello, <%= user.name %>. Here is your service history:</h2>`;
+          
+
+          if (!history.length) {
+            html += `<p>You have no service history.</p>`;
+          } else {
+            html += `<ul>`;
+            history.forEach((service) => {
+              html += `
+              <div class="items"
+            <li>
+              <strong>Vehicle:</strong> ${service.tipoVeiculo} |
+              <strong>Plate:</strong> ${service.placa}<br />
+              <strong>Services:</strong>
+              <ul>
+                ${service.servicos
+                  .map((s) => `<li>${s.categoria}: ${s.descricao}</li>`)
+                  .join("")}
+              </ul>
+            </li>
+            </div>
+          `;
+            });
+            html += `</ul>`;
+          }
+
+          html += `<button type="button" onclick="closeHistory()" class="close-btn">Close</button>`;
+
+          container.innerHTML = html;
+          modal.style.display = "block";
+        } catch (err) {
+          console.error("❌ Failed to load history:", err);
+          alert("Failed to load history");
+        }
+      }
+
+      function closeHistory() {
+        document.getElementById("history-modal").style.display = "none";
       }
 
       function closeHistory() {

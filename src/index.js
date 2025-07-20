@@ -144,6 +144,23 @@ app.get("/home", async (req, res) => {
   }
 });
 
+app.get("/history", async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const userEmail = req.session.user.email;
+
+  try {
+    const userHistory = await Booking.find({ email: userEmail }).sort({ createdAt: -1 });
+    res.json(userHistory);
+  } catch (err) {
+    console.error("❌ Error loading history:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
 app.post("/book", async (req, res) => {
   if (!req.session.user) return res.redirect("/");
 
