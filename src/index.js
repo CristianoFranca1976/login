@@ -65,7 +65,7 @@ app.post("/signup", async (req, res) => {
 
     const result = await collection.create(data);
 
-    console.log("✅ Usuário criado:", result);
+    console.log("✅ User created:", result);
 
     return res.redirect("/"); // ou res.render("home");
   } catch (err) {
@@ -152,19 +152,19 @@ app.post("/book", async (req, res) => {
     });
 
     await newBooking.save();
-    console.log("✅ Booking salvo no MongoDB");
+    console.log("✅ Booking saved in MongoDB");
 
     // Corpo do e-mail simples
     const emailBody = `
-      <h2>Agendamento Recebido</h2>
-      <p>Olá ${name},</p>
-      <p>Recebemos seu agendamento para:</p>
+      <h2>Appointment Received</h2>
+      <p>Hi ${name},</p>
+      <p>We received your appointment for:</p>
       <ul>
-        <li><strong>Veículo:</strong> ${tipoVeiculo}</li>
-        <li><strong>Placa:</strong> ${placa}</li>
-        <li><strong>Serviços:</strong> ${Array.isArray(servicos) ? servicos.join(", ") : servicos}</li>
+        <li><strong>Vehicle:</strong> ${tipoVeiculo}</li>
+        <li><strong>Plate:</strong> ${placa}</li>
+        <li><strong>Services:</strong> ${Array.isArray(servicos) ? servicos.join(", ") : servicos}</li>
       </ul>
-      <p>Entraremos em contato em breve!</p>
+      <p>We will be in touch soon!</p>
     `;
 
     // Nodemailer
@@ -179,15 +179,15 @@ app.post("/book", async (req, res) => {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: [process.env.EMAIL_OWNER, email], // vai para você + cliente
-      subject: "📋 Novo Agendamento Recebido",
+      subject: "📋 New Appointment Received",
       html: emailBody,
     });
 
-    console.log("📨 E-mail enviado para:", email);
-    res.send("✅ Agendamento salvo e e-mail enviado com sucesso.");
+    console.log("📨 Email sent to:", email);
+    res.send("✅ Appointment saved and email sent successfully.");
   } catch (err) {
-    console.error("❌ Erro no processo:", err.message);
-    res.status(500).send("Erro ao salvar ou enviar e-mail: " + err.message);
+    console.error("❌ Process error:", err.message);
+    res.status(500).send("Error saving or sending email: " + err.message);
   }
 });
 
