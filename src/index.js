@@ -20,7 +20,7 @@ app.set("views", path.join(__dirname, "../views"));
 
 app.use(
   session({
-    secret: "Palitodedete10@", // Pode ser qualquer frase secreta
+    secret: process.env.SECRET, // Pode ser qualquer frase secreta
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }, // Coloque como 'true' se usar HTTPS
