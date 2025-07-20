@@ -145,7 +145,13 @@ app.get("/home", async (req, res) => {
 });
 
 app.post("/book", async (req, res) => {
-  if (!req.session.user) return res.redirect("/");
+  if (!req.session.user) {
+    if (req.headers["content-type"] === "application/json") {
+      return res.status(401).json({ error: "Unauthenticated user" });
+    } else {
+      return res.redirect("/");
+    }
+  }
 
   const { tipoVeiculo, placa, servicos } = req.body;
   const name = req.session.user.name;
@@ -183,8 +189,8 @@ app.post("/book", async (req, res) => {
           )
           .join("<br />")
       : typeof servicos === "object"
-        ? `<strong>${servicos.categoria}:</strong> ${servicos.descricao}`
-        : servicos
+      ? `<strong>${servicos.categoria}:</strong> ${servicos.descricao}`
+      : servicos
   }
 </li>
 

@@ -536,51 +536,58 @@
       // send form
 
       document.getElementById("sendBtn").addEventListener("click", async () => {
-        const form = document.getElementById("repairForm");
-        const formData = new FormData(form);
+  const form = document.getElementById("repairForm");
+  const formData = new FormData(form);
 
-        const data = {
-          name: formData.get("name"),
-          email: formData.get("email"),
-          tipoVeiculo: formData.get("tipoVeiculo"),
-          placa: formData.get("placa"),
-          servicos: [],
-        };
+  const data = {
+    name: formData.get("name"),
+    email: formData.get("email"),
+    tipoVeiculo: formData.get("tipoVeiculo"),
+    placa: formData.get("placa"),
+    servicos: [],
+  };
 
-        const categorias = formData.getAll("categoria[]");
-        const descricoes = formData.getAll("descricao[]");
+  const categorias = formData.getAll("categoria[]");
+  const descricoes = formData.getAll("descricao[]");
 
-        for (let i = 0; i < categorias.length; i++) {
-          data.servicos.push({
-            categoria: categorias[i],
-            descricao: descricoes[i],
-          });
-        }
+  for (let i = 0; i < categorias.length; i++) {
+    data.servicos.push({
+      categoria: categorias[i],
+      descricao: descricoes[i],
+    });
+  }
 
-        try {
-          const response = await fetch("/book", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify(data),
-          });
+  try {
+    const response = await fetch("/book", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // ← ESSENCIAL
+      body: JSON.stringify(data),
+    });
 
-          const contentType = response.headers.get("content-type");
+    const contentType = response.headers.get("content-type");
 
-          if (contentType && contentType.includes("application/json")) {
-            const result = await response.json();
-            alert(result.message || "Agenda made with success!");
-            form.reset();
-            document.getElementById("formOverlay").style.display = "none";
-          } else {
-            const text = await response.text();
-            alert("Unexpected error:\n" + text); // provavelmente HTML do login
-          }
-        } catch (err) {
-          console.error("❌ Error sending:", err);
-          alert("Error sending schedule");
-        }
-      });
+    if (response.ok && contentType && contentType.includes("text")) {
+      const result = await response.text();
+      alert(result);
+      form.reset();
+    } else if (contentType && contentType.includes("application/json")) {
+      const json = await response.json();
+      alert(json.error || "Algo deu errado.");
+    } else {
+      const text = await response.text();
+      alert("Erro inesperado:\n" + text);
+    }
+
+  } catch (err) {
+    console.error("❌ Erro ao enviar:", err);
+    alert("Erro ao enviar agendamento");
+  } finally {
+    // SEMPRE fecha o overlay, mesmo com erro
+    document.getElementById("formOverlay").style.display = "none";
+  }
+});
+
 
       // about
 
