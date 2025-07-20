@@ -273,7 +273,7 @@
           </div>
           <form action="/logout" method="get">
             <button type="submit">
-              Logout 
+              Logout
               <p id="customer"><%= user.name %></p>
             </button>
           </form>
@@ -561,16 +561,24 @@
           const response = await fetch("/book", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify(data),
           });
 
-          const result = await response.text();
-          alert(result); // ou exibir bonitinho na tela
-          form.reset(); // limpa formulário se quiser
-          document.getElementById("formOverlay").style.display = "none";
+          const contentType = response.headers.get("content-type");
+
+          if (contentType && contentType.includes("application/json")) {
+            const result = await response.json();
+            alert(result.message || "Agenda made with success!");
+            form.reset();
+            document.getElementById("formOverlay").style.display = "none";
+          } else {
+            const text = await response.text();
+            alert("Unexpected error:\n" + text); // provavelmente HTML do login
+          }
         } catch (err) {
-          console.error("❌ Erro ao enviar:", err);
-          alert("Erro ao enviar agendamento");
+          console.error("❌ Error sending:", err);
+          alert("Error sending schedule");
         }
       });
 
