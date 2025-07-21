@@ -199,7 +199,6 @@ button:hover {
 #imagem {
   width: auto;
   object-fit: cover;
-  position: absolute;
   transition: opacity 1s ease-in-out;
   opacity: 1;
 }
@@ -451,6 +450,8 @@ fieldset button {
   text-align: justify;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 20px;
   word-spacing: 5px;
   position: absolute;
@@ -463,6 +464,7 @@ fieldset button {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  overflow-y: auto;
 }
 .about-box ul li {
   list-style-type: none;
@@ -580,8 +582,10 @@ fieldset button {
   }
   .about-box {
     width: 90%;
-    height: auto;
+    height: 90%;
     word-spacing: 0px;
+    font-size: 1.9vh;
+    padding: 5px;
   }
 }
 @media only screen and (max-width: 600px) {
@@ -596,5 +600,12 @@ fieldset button {
   }
   nav {
     flex-direction: column;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .form-popup {
+    height: 95%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
   }
 }
