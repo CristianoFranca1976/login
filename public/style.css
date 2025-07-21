@@ -222,7 +222,12 @@ button:hover {
   justify-content: center;
   align-items: center;
 }
-
+.cant p { 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
 .modal-content {
   background: rgba(99, 99, 99, 0.445);
   padding: 20px;
